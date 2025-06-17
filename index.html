@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashLearn AI</title>
+  <style>
+    :root {
+      --bg-light: #f3f4f6;
+      --bg-dark: #111827;
+      --card-light: #ffffff;
+      --card-dark: #1f2937;
+      --text-light: #111827;
+      --text-dark: #f9fafb;
+      --accent: #6366f1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    body.light {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      background: linear-gradient(90deg, #6366f1, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      padding: 0.5rem 0 0.25rem;
+    }
+
+    header img {
+      width: 140px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 24px #6366f122;
+      margin-bottom: 1rem;
+      animation: photoPopIn 1.1s cubic-bezier(.4,2,.3,1);
+      transition: transform 0.35s cubic-bezier(.4,2,.3,1), box-shadow 0.35s;
+    }
+    header img:hover {
+      transform: scale(1.07) rotate(-2deg) translateY(-6px);
+      box-shadow: 0 8px 32px #6366f144;
+    }
+    @keyframes photoPopIn {
+      from { opacity: 0; transform: scale(0.7) translateY(40px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .generator {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-direction: column;
+    }
+
+    #topic-input {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    #generate-btn {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+    #generate-btn:hover {
+      transform: scale(1.03);
+    }
+    #generate-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    #topic-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    .card {
+      perspective: 1000px;
+      height: 200px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: white;
+      color: black;
+      transition: all 0.3s ease;
+    }
+    .card-back {
+      background: #c7d2fe;
+      transform: rotateY(180deg);
+      color: #111827;
+    }
+    .card-front span {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    .card-front p,
+    .card-back p {
+      font-weight: 600;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .delete-btn:hover {
+      transform: scale(1.1);
+    }
+    .delete-btn:focus {
+      outline: 2px solid #ef4444;
+      box-shadow: 0 0 0 3px #ef444488;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      color: #6366f1;
+      font-size: 1.05em;
+    }
+    footer a {
+      color: #6366f1;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="light">
+  <div class="container">
+    <header>
+      <img src="pranit.jpeg" alt="Developer photo" style="width:140px; height:180px; object-fit:cover; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; margin-bottom:1rem;" />
+      <h1>🧠 FlashLearn AI</h1>
+      <p style="text-align:center">Smart Flashcards for IIT JEE & NEET</p>
+      <button id="theme-toggle">Toggle Dark Mode</button>
+    </header>
+
+    <section class="generator">
+      <input type="text" id="topic-input" placeholder="Enter topic like 'Photosynthesis' or 'Newton's Laws'" />
+      <button id="generate-btn">Generate Flashcards</button>
+    </section>
+
+    <section class="flashcards" id="flashcards"></section>
+    <div id="status-message" style="text-align:center; margin-top:1.5rem; color:#ef4444; font-weight:500;"></div>
+
+    <footer>
+      Made for <strong>AIR 1 IIT JEE Aspirants</strong> | Developed by <a href="developer.html">PRANIT</a>
+    </footer>
+  </div>
+
+  <script>
+    const topicInput = document.getElementById("topic-input");
+    const generateBtn = document.getElementById("generate-btn");
+    const flashcardsContainer = document.getElementById("flashcards");
+    const themeToggle = document.getElementById("theme-toggle");
+
+    let cards = [];
+    let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || "AIzaSyB7wqnH__VvoyrN-MIP7GhAWgRhrE48JtQ";
+    const statusMessage = document.getElementById('status-message');
+
+    // Load saved cards from localStorage
+    window.addEventListener('load', () => {
+      const savedCards = localStorage.getItem('flashcards');
+      if (savedCards) {
+        cards = JSON.parse(savedCards);
+        renderCards();
+      }
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.className = savedTheme;
+      themeToggle.textContent = savedTheme === 'dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+    });
+
+    // Toggle light/dark mode
+    themeToggle.addEventListener("click", () => {
+      const body = document.body;
+      body.classList.toggle("dark");
+      body.classList.toggle("light");
+      
+      themeToggle.textContent = body.classList.contains("dark") ? "Toggle Light Mode" : "Toggle Dark Mode";
+      localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+    });
+
+    // Save cards to localStorage and to a file by topic/chapter
+    function saveCards() {
+      localStorage.setItem('flashcards', JSON.stringify(cards));
+      // Save by chapter/topic
+      const byTopic = {};
+      cards.forEach(card => {
+        const topic = card.topic || 'General';
+        if (!byTopic[topic]) byTopic[topic] = [];
+        byTopic[topic].push(card);
+      });
+      Object.keys(byTopic).forEach(topic => {
+        const safeTopic = topic.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const fileName = `flashcards/${safeTopic}.json`;
+        // Save each topic's cards as a JSON file (AI managed)
+        window.saveFlashcardFile && window.saveFlashcardFile(fileName, JSON.stringify(byTopic[topic], null, 2));
+      });
+    }
+
+    // Render flashcards to the DOM
+    function renderCards() {
+      flashcardsContainer.innerHTML = '';
+      
+      if (cards.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.style.textAlign = 'center';
+        emptyMessage.style.marginTop = '2rem';
+        emptyMessage.style.gridColumn = '1 / -1';
+        emptyMessage.textContent = 'No flashcards yet. Enter a topic above!';
+        flashcardsContainer.appendChild(emptyMessage);
+        return;
+      }
+
+      cards.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card';
+        cardElement.dataset.index = index;
+
+        cardElement.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front">
+              <span>${card.topic}</span>
+              <p>${card.front}</p>
+            </div>
+            <div class="card-back">
+              <span>Answer</span>
+              <p>${card.back}</p>
+            </div>
+          </div>
+          <button class="delete-btn" title="Delete">&times;</button>
+        `;
+
+        // Add click event for flipping
+        cardElement.addEventListener('click', (e) => {
+          if (!e.target.closest('.delete-btn')) {
+            cardElement.classList.toggle('flipped');
+          }
+        });
+
+        // Add delete button functionality
+        const deleteBtn = cardElement.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cards.splice(index, 1);
+          saveCards();
+          renderCards();
+        });
+
+        flashcardsContainer.appendChild(cardElement);
+      });
+    }
+
+    // Generate flashcards using Gemini AI
+    async function generateFlashcardsWithGemini(input) {
+      statusMessage.textContent = '';
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `Generate 20 flashcards for the topic "${input}". Format them as JSON like this:\n[\n  { "question": "Question 1", "answer": "Answer 1" },\n  ...\n]`
+              }]
+            }]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!rawText) {
+          throw new Error("No response from Gemini");
+        }
+
+        let parsed;
+        try {
+          const cleanText = rawText
+            .replace(/```json\n?/, '')
+            .replace(/\n?```$/, '')
+            .trim();
+          parsed = JSON.parse(cleanText);
+        } catch (e) {
+          console.error("Gemini returned invalid JSON:", rawText);
+          throw new Error("Gemini returned invalid JSON");
+        }
+
+        parsed.forEach(c => {
+          cards.unshift({
+            id: Date.now() + Math.random(),
+            topic: input,
+            front: c.question,
+            back: c.answer,
+            flipped: false
+          });
+        });
+
+        saveCards();
+        renderCards();
+        statusMessage.textContent = '';
+      } catch (error) {
+        console.error(error);
+        if (error.message.includes('API error') || error.message.includes('No response') || error.message.includes('invalid JSON')) {
+          statusMessage.textContent = 'AI error: ' + error.message + '. Please check your API key.';
+          let newKey = prompt('Gemini API key invalid or quota exceeded. Enter a new Gemini API key:');
+          if (newKey) {
+            GEMINI_API_KEY = newKey;
+            localStorage.setItem('gemini_api_key', newKey);
+            statusMessage.textContent = 'Trying again with your new API key...';
+            await generateFlashcardsWithGemini(input);
+            return;
+          } else {
+            statusMessage.textContent = 'No valid API key provided. Cannot generate flashcards.';
+          }
+        } else {
+          statusMessage.textContent = 'Error: ' + error.message;
+        }
+        cards.unshift({
+          id: Date.now(),
+          topic: input,
+          front: `Error generating cards.`,
+          back: "Please try again later.",
+          flipped: false
+        });
+        saveCards();
+        renderCards();
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate Flashcards";
+      }
+    }
+
+    // Event listener for generate button
+    generateBtn.addEventListener("click", () => {
+      const topic = topicInput.value.trim();
+      if (!topic) return;
+      
+      generateBtn.disabled = true;
+      generateBtn.textContent = "Generating...";
+      
+      generateFlashcardsWithGemini(topic);
+    });
+
+    // For development only - remove in production
+    function testMockCards() {
+      const mockCards = [
+        {
+          id: Date.now(),
+          topic: "Newton's Laws",
+          front: "What is Newton's First Law?",
+          back: "An object remains at rest or in uniform motion unless acted upon by a force."
+        },
+        {
+          id: Date.now() + 1,
+          topic: "Photosynthesis",
+          front: "Where does photosynthesis occur?",
+          back: "Chloroplasts in plant cells."
+        }
+      ];
+      
+      cards = [...mockCards, ...cards];
+      saveCards();
+      renderCards();
+    }
+
+    // Uncomment to test with mock cards without Gemini API
+    // testMockCards();
+  </script>
+</body>
+</html>
