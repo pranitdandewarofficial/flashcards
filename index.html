@@ -240,6 +240,7 @@
       text-align: center;
     }
 
+    /* Responsive and touch-friendly flashcards */
     .flashcards-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -257,12 +258,13 @@
       align-items: flex-start;
       justify-content: flex-start;
       position: relative;
-      transition: box-shadow 0.3s, transform 0.3s;
+      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
       cursor: pointer;
       overflow: hidden;
       border: 1.5px solid #a5b4fc;
+      touch-action: manipulation;
     }
-    .flashcard:hover {
+    .flashcard:hover, .flashcard:focus-within {
       box-shadow: 0 8px 32px #6366f144;
       transform: scale(1.04) translateY(-6px) rotate(-1deg);
       z-index: 2;
@@ -289,25 +291,155 @@
       display: block;
       animation: fadeInAnswer 0.5s;
     }
+    .flashcard .actions {
+      margin-top: 1em;
+      display: flex;
+      gap: 0.7em;
+    }
+    .flashcard .actions button {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 0.7em;
+      padding: 0.3em 0.9em;
+      font-size: 0.98em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .flashcard .actions button.known { background: #22c55e; }
+    .flashcard .actions button.difficult { background: #ef4444; }
+    .flashcard .actions button.edit { background: #f59e42; }
+    .flashcard .actions button.delete { background: #6366f1; }
+    .flashcard .actions button:focus { outline: 2px solid #6366f1; }
     @keyframes fadeInAnswer {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* Progress bar */
+    .progress-bar {
+      width: 100%;
+      background: #e0e7ff;
+      border-radius: 1em;
+      margin: 1.5em 0 1em 0;
+      height: 1.1em;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #22c55e);
+      border-radius: 1em;
+      transition: width 0.5s;
+    }
+    /* Motivational quote */
+    .motivation {
+      text-align: center;
+      color: #4338ca;
+      font-size: 1.13em;
+      font-weight: 500;
+      margin: 1.5em 0 0.5em 0;
+    }
+    /* Accessibility: high contrast for focus */
+    .flashcard:focus-within { outline: 2px solid #6366f1; }
+    /* Theme and font size personalization */
+    .theme-toggle, .font-toggle {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 1em;
+      padding: 0.4em 1.1em;
+      margin: 0 0.5em;
+      font-size: 1em;
+      cursor: pointer;
+      margin-bottom: 1em;
+    }
+    .search-bar {
+      width: 100%;
+      max-width: 400px;
+      margin: 1em auto 1.5em auto;
+      display: flex;
+      gap: 0.5em;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.6em 1em;
+      border-radius: 0.7em;
+      border: 1.5px solid #a5b4fc;
+      font-size: 1em;
+    }
+    .search-bar button {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 0.7em;
+      padding: 0.3em 1em;
+      font-size: 1em;
+      cursor: pointer;
+    }
 
-    /* Developer Info Modal/Section */
-    .dev-modal-bg { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(60,62,100,0.18); z-index:1000; align-items:center; justify-content:center; }
-    .dev-modal-bg.active { display:flex; }
-    .dev-card { background:#fff; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; padding:2.5rem 2rem 2rem 2rem; max-width:400px; text-align:center; margin:2rem auto; position:relative; }
-    .dev-card h1 { color:#6366f1; margin-bottom:0.5rem; font-size:2.1rem; }
-    .dev-card p { color:#444; font-size:1.1rem; margin-bottom:1.2rem; }
-    .dev-links a { display:inline-block; margin:0.5rem 0.7rem; color:#6366f1; text-decoration:none; font-weight:500; transition:color 0.2s; }
-    .dev-links a:hover { color:#4338ca; text-decoration:underline; }
-    .dev-close { position:absolute; top:0.7rem; right:1.1rem; font-size:1.5em; color:#6366f1; background:none; border:none; cursor:pointer; }
-    @media (max-width:500px) { .dev-card { padding:1.2rem 0.5rem; } }
+    @keyframes fadeIn { from { opacity:0; transform:scale(0.95);} to { opacity:1; transform:scale(1);} }
+    @keyframes imgPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    .dev-modal-bg { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.65); z-index:1000; align-items:center; justify-content:center; }
+    .dev-modal-bg.active { display:flex !important; }
+    .dev-card { background:#fff; padding:3em 2.5em 2em 2.5em; border-radius:1.7em; box-shadow:0 12px 40px #6366f155; max-width:420px; margin:auto; position:relative; text-align:center; animation:fadeIn 0.5s; }
+    .dev-close { position:absolute; top:0.7em; right:1em; background:none; border:none; font-size:2em; color:#6366f1; cursor:pointer; }
+    .dev-links a { color:#6366f1; text-decoration:none; font-weight:500; margin-bottom:0.3em; transition:color 0.2s; }
+    .dev-links a:hover { color:#ec4899; }
+    .dev-links { margin-top:1.2em; display:flex; flex-direction:column; gap:0.7em; }
+    .dev-img-animate { animation: imgPop 0.8s cubic-bezier(.4,2,.3,1); }
+
+    .dev-card, .flashcard, .theme-toggle, .font-toggle, #generate-btn, .dev-close, .dev-links a {
+      transition: box-shadow 0.3s, background 0.3s, color 0.2s, transform 0.2s;
+    }
+    .dev-links a:focus, .dev-close:focus {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    .dev-card {
+      background: var(--card-light);
+      color: var(--text-light);
+    }
+    body.dark .dev-card {
+      background: var(--card-dark);
+      color: var(--text-dark);
+    }
+    .dev-links a {
+      border-radius: 0.5em;
+      padding: 0.3em 0.7em;
+    }
+    .dev-links a:hover {
+      background: #e0e7ff;
+      color: #4338ca;
+      transform: translateY(-2px) scale(1.04);
+    }
+    body.dark .dev-links a:hover {
+      background: #1f2937;
+      color: #a5b4fc;
+    }
+    .flashcard {
+      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+    }
+    .flashcard:focus-within, .flashcard:hover {
+      box-shadow: 0 8px 32px #6366f144;
+      transform: scale(1.04) translateY(-6px) rotate(-1deg);
+    }
+    .theme-toggle, .font-toggle, #generate-btn {
+      transition: background 0.3s, color 0.2s, transform 0.2s;
+    }
+    .theme-toggle:focus, .font-toggle:focus, #generate-btn:focus {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
   </style>
+  <!-- Font Awesome CDN for brand icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="light">
-  <div class="container">
+    <div id="auth-section" style="text-align:center;margin:2em 0 1.5em 0;"></div>
+    <div class="container" id="main-content" style="display:none;">
     <header>
       <img src="pranit.jpeg" alt="Developer photo" style="width:140px; height:180px; object-fit:cover; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; margin-bottom:1rem;" />
       <div style="font-size:1.1em; color:#6366f1; margin-bottom:0.5rem; font-weight:500;">Hi, me PRANIT!</div>
@@ -321,7 +453,23 @@
       <button id="generate-btn">Generate Flashcards</button>
     </section>
 
-    <section class="flashcards-section" id="flashcards"></section>
+    <!-- Theme and font size toggles -->
+    <div style="text-align:right;max-width:900px;margin:auto;">
+      <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+      <button class="font-toggle" onclick="toggleFontSize()">A+</button>
+    </div>
+    <!-- Motivational quote -->
+    <div class="motivation" id="motivationQuote">"Success is the sum of small efforts, repeated day in and day out."</div>
+    <!-- Progress bar -->
+    <div class="progress-bar"><div class="progress-bar-inner" id="progressBarInner" style="width:0%"></div></div>
+    <!-- Search/filter bar -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search flashcards..." aria-label="Search flashcards" />
+      <button onclick="searchFlashcards()">Search</button>
+      <button onclick="resetSearch()">Reset</button>
+    </div>
+
+    <section class="flashcards-section" id="flashcardsSection" style="display:none;"></section>
     <div id="status-message" style="text-align:center; margin-top:1.5rem; color:#ef4444; font-weight:500;"></div>
 
     <div id="info-section" style="max-width:700px;margin:2.5rem auto 2rem auto;padding:2rem 1.5rem;background:linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);border-radius:1.5rem;box-shadow:0 4px 24px #6366f122;">
@@ -352,18 +500,27 @@
       <button id="showDevBtn" style="background:#6366f1;color:#fff;padding:0.5em 1.3em;border-radius:1.2em;font-size:1em;font-weight:500;border:none;box-shadow:0 2px 8px #6366f133;cursor:pointer;">About the Developer</button>
     </div>
     <div class="dev-modal-bg" id="devModal">
-      <div class="dev-card">
+      <div class="dev-card" style="background:#fff;padding:3em 2.5em 2em 2.5em;border-radius:1.7em;box-shadow:0 12px 40px #6366f155;max-width:420px;margin:auto;position:relative;text-align:center;animation:fadeIn 0.5s;">
         <button class="dev-close" id="closeDevBtn" title="Close">&times;</button>
-        <img src="https://raw.githubusercontent.com/pranitdandewarofficial/flashcards/main/pranit.jpeg" alt="Developer photo" loading="lazy" style="width:110px;height:140px;object-fit:cover;border-radius:1.1rem;box-shadow:0 2px 12px #6366f122;margin-bottom:1rem;" />
-        <h1>PRANIT</h1>
-        <p>Developer of FlashLearn AI.<br>Passionate about helping AIR 1 IIT JEE aspirants achieve their dreams with smart, AI-powered learning tools.</p>
-        <div class="dev-links">
-          <a href="mailto:busines.pranit@email.com">Email</a>
-          <a href="https://github.com/pranitdandewarofficial" target="_blank">GitHub</a>
-          <a href="https://twitter.com/pranitdandewar" target="_blank">Twitter</a>
-          <a href="https://linkedin.com/in/yourlinkedin" target="_blank">LinkedIn</a>
+        <img src="https://github.com/pranitdandewarofficial/flashcards/blob/c3a4e8f61a52db196443ac68c6411c385157264f/pranit.jpeg?raw=true" alt="Developer photo" loading="eager" class="dev-img-animate" style="width:150px;height:190px;object-fit:cover;border-radius:1.3rem;box-shadow:0 4px 18px #6366f122;margin-bottom:1.2rem;" />
+        <h1 style="color:#6366f1;font-size:2em;margin:0.7em 0 0.3em 0;letter-spacing:0.01em;">PRANIT DANDEWAR</h1>
+        <p style="color:#22223b;font-size:1.18em;line-height:1.5;">Developer of <b>FlashLearn AI</b>.<br>Passionate about helping students achieve their dreams with smart, AI-powered learning tools.<br><span style='color:#6366f1;font-size:1.05em;'>Let's connect and build the future of learning!</span></p>
+        <div class="dev-links" style="margin-top:1em;display:flex;flex-direction:column;gap:0.5em;">
+          <a href="mailto:busines.pranit@email.com" title="Email" aria-label="Email" style="display:flex;align-items:center;gap:0.5em;"><i class="fa-solid fa-envelope"></i>Email</a>
+          <a href="https://github.com/pranitdandewarofficial" target="_blank" title="GitHub" aria-label="GitHub" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-github"></i>GitHub</a>
+          <a href="https://twitter.com/pranitdandewar" target="_blank" title="Twitter" aria-label="Twitter" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-twitter"></i>Twitter</a>
+          <a href="https://linkedin.com/in/yourlinkedin" target="_blank" title="LinkedIn" aria-label="LinkedIn" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-linkedin"></i>LinkedIn</a>
         </div>
       </div>
+    </div>
+
+    <!-- Authentication Section -->
+    <div id="auth-section" style="text-align:center;margin:2em 0 1.5em 0;">
+      <div id="user-info" style="display:none;margin-bottom:1em;"></div>
+      <button id="login-google" style="background:#fff;color:#6366f1;border:1.5px solid #6366f1;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fab fa-google"></i> Sign in with Google</button>
+      <button id="login-github" style="background:#fff;color:#22223b;border:1.5px solid #22223b;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fab fa-github"></i> Sign in with GitHub</button>
+      <button id="login-email" style="background:#fff;color:#6366f1;border:1.5px solid #6366f1;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fa-solid fa-envelope"></i> Sign in with Email</button>
+      <button id="logout-btn" style="display:none;background:#ef4444;color:#fff;border:none;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
     </div>
 
     <footer>
@@ -374,7 +531,7 @@
   <script>
     const topicInput = document.getElementById("topic-input");
     const generateBtn = document.getElementById("generate-btn");
-    const flashcardsContainer = document.getElementById("flashcards");
+    const flashcardsContainer = document.getElementById("flashcardsSection");
     const themeToggle = document.getElementById("theme-toggle");
 
     let cards = [];
@@ -426,6 +583,7 @@
     // Render flashcards to the DOM
     function renderCards() {
       flashcardsContainer.innerHTML = '';
+      flashcardsContainer.style.display = cards.length > 0 ? 'grid' : 'none';
       
       if (cards.length === 0) {
         const emptyMessage = document.createElement('div');
@@ -611,6 +769,397 @@
     document.getElementById('devModal').onclick = function(e) {
       if (e.target === this) this.classList.remove('active');
     };
+
+    // Keyboard accessibility for modal
+    document.getElementById('showDevBtn').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        document.getElementById('devModal').classList.add('active');
+        document.getElementById('closeDevBtn').focus();
+      }
+    });
+    document.getElementById('closeDevBtn').addEventListener('keydown', function(e) {
+      if (e.key === 'Tab' && e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('showDevBtn').focus();
+      }
+    });
+    // Trap focus inside modal when open
+    document.getElementById('devModal').addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        const focusable = this.querySelectorAll('a,button');
+        const first = focusable[0];
+        const last = focusable[focusable.length-1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+      if (e.key === 'Escape') {
+        this.classList.remove('active');
+        document.getElementById('showDevBtn').focus();
+      }
+    });
+
+    // --- Firebase Auth UI Logic ---
+    const authSection = document.getElementById('auth-section');
+    const userInfo2 = document.getElementById('user-info');
+    const loginGoogle = document.getElementById('login-google');
+    const loginGithub = document.getElementById('login-github');
+    const loginEmail = document.getElementById('login-email');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    function showUser(user) {
+      userInfo.style.display = 'block';
+      userInfo.innerHTML = `<b>Signed in as:</b><br><img src="${user.photoURL||''}" style="width:40px;height:40px;border-radius:50%;vertical-align:middle;margin-right:0.5em;">${user.displayName||user.email}`;
+      loginGoogle.style.display = 'none';
+      loginGithub.style.display = 'none';
+      loginEmail.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+    }
+    function hideUser() {
+      userInfo.style.display = 'none';
+      loginGoogle.style.display = 'inline-block';
+      loginGithub.style.display = 'inline-block';
+      loginEmail.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+    }
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        showUser(user);
+        // TODO: Load user flashcards from Firestore here
+      } else {
+        hideUser();
+        // TODO: Hide flashcards or show guest mode
+      }
+    });
+    loginGoogle.onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider);
+    };
+    loginGithub.onclick = () => {
+      const provider = new firebase.auth.GithubAuthProvider();
+      auth.signInWithPopup(provider);
+    };
+    loginEmail.onclick = () => {
+      const email = prompt('Enter your email:');
+      const password = prompt('Enter your password:');
+      if (email && password) {
+        auth.signInWithEmailAndPassword(email, password).catch(e => {
+          if (e.code === 'auth/user-not-found') {
+            auth.createUserWithEmailAndPassword(email, password);
+          } else {
+            alert(e.message);
+          }
+        });
+      }
+    };
+    logoutBtn.onclick = () => auth.signOut();
+    // --- Flashcard Data & State ---
+    let flashcards = JSON.parse(localStorage.getItem('flashcards')||'[]');
+    let filteredFlashcards = [...flashcards];
+    let editIndex = null;
+    let knownSet = new Set(JSON.parse(localStorage.getItem('knownSet')||'[]'));
+    let difficultSet = new Set(JSON.parse(localStorage.getItem('difficultSet')||'[]'));
+    let fontSize = localStorage.getItem('fontSize')||'1em';
+    let theme = localStorage.getItem('theme')||'light';
+    let motivationQuotes = [
+      "Success is the sum of small efforts, repeated day in and day out.",
+      "Don’t watch the clock; do what it does. Keep going.",
+      "The secret of getting ahead is getting started.",
+      "Great things never come from comfort zones.",
+      "Push yourself, because no one else is going to do it for you."
+    ];
+    function showMotivation() {
+      document.getElementById('motivationQuote').textContent = motivationQuotes[Math.floor(Math.random()*motivationQuotes.length)];
+    }
+    showMotivation();
+    // --- Theme & Font Size ---
+    function toggleTheme() {
+      theme = (theme==='light')?'dark':'light';
+      document.body.className = theme;
+      localStorage.setItem('theme', theme);
+    }
+    function toggleFontSize() {
+      fontSize = (fontSize==='1em')?'1.2em':'1em';
+      document.body.style.fontSize = fontSize;
+      localStorage.setItem('fontSize', fontSize);
+    }
+    document.body.className = theme;
+    document.body.style.fontSize = fontSize;
+    // --- Flashcard CRUD ---
+    function renderFlashcards(list=filteredFlashcards) {
+      const section = document.getElementById('flashcardsSection');
+      section.innerHTML = '';
+      if (!list.length) {
+        section.innerHTML = '<div style="text-align:center;color:#a5b4fc;font-size:1.1em;">No flashcards yet. Add or import some!</div>';
+        updateProgress();
+        return;
+      }
+      list.forEach((card, i) => {
+        const div = document.createElement('div');
+        div.className = 'flashcard'+(card.known?' known':'')+(card.difficult?' difficult':'');
+        div.tabIndex = 0;
+        div.innerHTML = `
+          <div class="question">${card.question}</div>
+          <div class="answer" style="display:none;">${card.answer}</div>
+          <div class="actions">
+            <button class="known" title="Mark as Known" onclick="markKnown(${i})">✓</button>
+            <button class="difficult" title="Mark as Difficult" onclick="markDifficult(${i})">!</button>
+            <button class="edit" title="Edit" onclick="editFlashcard(${i})">✎</button>
+            <button class="delete" title="Delete" onclick="deleteFlashcard(${i})">🗑️</button>
+          </div>
+        `;
+        div.onclick = function(e) {
+          if (!e.target.closest('.actions')) {
+            const ans = div.querySelector('.answer');
+            ans.style.display = ans.style.display==='block'?'none':'block';
+            div.classList.toggle('show-answer');
+          }
+        };
+        div.onkeydown = function(e) {
+          if (e.key==='Enter' || e.key===' ') div.click();
+        };
+        section.appendChild(div);
+      });
+      updateProgress();
+    }
+    function saveFlashcards() {
+      localStorage.setItem('flashcards', JSON.stringify(flashcards));
+      renderFlashcards();
+      if (auth.currentUser) saveFlashcardsToCloud(auth.currentUser, flashcards);
+    }
+    function saveFlashcard(e) {
+      e.preventDefault();
+      const q = document.getElementById('questionInput').value.trim();
+      const a = document.getElementById('answerInput').value.trim();
+      if (!q || !a) return false;
+      if (editIndex!==null) {
+        flashcards[editIndex] = {question:q, answer:a, known:flashcards[editIndex].known, difficult:flashcards[editIndex].difficult};
+        editIndex = null;
+      } else {
+        flashcards.push({question:q, answer:a});
+      }
+      document.getElementById('flashcardForm').reset();
+      saveFlashcards();
+      return false;
+    }
+    function editFlashcard(i) {
+      document.getElementById('questionInput').value = flashcards[i].question;
+      document.getElementById('answerInput').value = flashcards[i].answer;
+      editIndex = i;
+    }
+    function deleteFlashcard(i) {
+      if (confirm('Delete this flashcard?')) {
+        flashcards.splice(i,1);
+        saveFlashcards();
+      }
+    }
+    function cancelEdit() {
+      document.getElementById('flashcardForm').reset();
+      editIndex = null;
+    }
+    // --- Mark Known/Difficult ---
+    function markKnown(i) {
+      flashcards[i].known = !flashcards[i].known;
+      saveFlashcards();
+    }
+    function markDifficult(i) {
+      flashcards[i].difficult = !flashcards[i].difficult;
+      saveFlashcards();
+    }
+    // --- Shuffle ---
+    function shuffleFlashcards() {
+      for (let i = flashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+      }
+      saveFlashcards();
+    }
+    // --- Search/Filter ---
+    function searchFlashcards() {
+      const val = document.getElementById('searchInput').value.toLowerCase();
+      filteredFlashcards = flashcards.filter(c => c.question.toLowerCase().includes(val) || c.answer.toLowerCase().includes(val));
+      renderFlashcards(filteredFlashcards);
+    }
+    function resetSearch() {
+      document.getElementById('searchInput').value = '';
+      filteredFlashcards = [...flashcards];
+      renderFlashcards();
+    }
+    // --- Import/Export ---
+    function exportFlashcards() {
+      const blob = new Blob([JSON.stringify(flashcards,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'flashcards.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    function importFlashcards(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (Array.isArray(imported)) {
+            flashcards = imported;
+            saveFlashcards();
+          } else {
+            alert('Invalid file format.');
+          }
+        } catch {
+          alert('Invalid file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+    // --- Progress Tracking ---
+    function updateProgress() {
+      const total = flashcards.length;
+      const known = flashcards.filter(c=>c.known).length;
+      const percent = total?Math.round((known/total)*100):0;
+      document.getElementById('progressBarInner').style.width = percent+'%';
+      document.getElementById('progressBarInner').textContent = percent+'%';
+    }
+    // --- Spaced Repetition (basic) ---
+    // (For demo: highlight difficult cards)
+    function highlightDifficult() {
+      flashcards.forEach((c,i)=>{
+        if (c.difficult) document.querySelectorAll('.flashcard')[i]?.classList.add('difficult');
+      });
+    }
+    // --- Keyboard Navigation ---
+    document.addEventListener('keydown', function(e) {
+      if (e.key==='ArrowRight') shuffleFlashcards();
+    });
+    // --- Initial Render ---
+    renderFlashcards();
+  </script>
+  <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBWXjy0y3xf_FjdPLoygm8IzPAsJkPP5Hs",
+        authDomain: "pranit-dandewar.firebaseapp.com",
+        projectId: "pranit-dandewar",
+        storageBucket: "pranit-dandewar.firebasestorage.app",
+        messagingSenderId: "729828970412",
+        appId: "1:729828970412:web:8cb3b430139fa446baf409",
+        measurementId: "G-0FG5MCQ7TQ"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // --- Authentication ---
+      const authSection2 = document.getElementById('auth-section');
+      const userInfo = document.getElementById('user-info');
+      const loginGoogleBtn = document.getElementById('login-google');
+      const loginGithubBtn = document.getElementById('login-github');
+      const loginEmailBtn = document.getElementById('login-email');
+      const logoutBtn = document.getElementById('logout-btn');
+
+      // Update UI for logged-in user
+      function updateUI(user) {
+        if (user) {
+          const { displayName, email, photoURL } = user;
+          userInfo2.style.display = 'block';
+          userInfo2.innerHTML = `
+            Signed in as <strong>${displayName || email}</strong>
+            <br><img src="${photoURL}" alt="Profile Photo" style="width:40px;height:40px;border-radius:50%;margin-top:0.5em;">
+          `;
+          loginGoogleBtn.style.display = 'none';
+          loginGithubBtn.style.display = 'none';
+          loginEmailBtn.style.display = 'none';
+          logoutBtn.style.display = 'inline-block';
+        } else {
+          userInfo2.style.display = 'none';
+          loginGoogleBtn.style.display = 'inline-block';
+          loginGithubBtn.style.display = 'inline-block';
+          loginEmailBtn.style.display = 'inline-block';
+          logoutBtn.style.display = 'none';
+        }
+      }
+
+      // Google login
+      loginGoogleBtn.addEventListener('click', () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).then(result => {
+          updateUI(result.user);
+        }).catch(console.error);
+      });
+
+      // GitHub login
+      loginGithubBtn.addEventListener('click', () => {
+        const provider = new firebase.auth.GithubAuthProvider();
+        auth.signInWithPopup(provider).then(result => {
+          updateUI(result.user);
+        }).catch(console.error);
+      });
+
+      // Email/password login
+      loginEmailBtn.addEventListener('click', () => {
+        const email = prompt('Enter your email:');
+        const password = prompt('Enter your password:');
+        if (email && password) {
+          auth.signInWithEmailAndPassword(email, password).then(result => {
+            updateUI(result.user);
+          }).catch(console.error);
+        }
+      });
+
+      // Logout
+      logoutBtn.addEventListener('click', () => {
+        auth.signOut().then(() => {
+          updateUI(null);
+        }).catch(console.error);
+      });
+
+      // Auth state listener
+      auth.onAuthStateChanged(user => {
+        updateUI(user);
+      });
+    </script>
+  <script>
+    // --- Firebase Flashcard Sync ---
+function saveFlashcardsToCloud(user, flashcards) {
+  if (!user) return;
+  db.collection('users').doc(user.uid).set({ flashcards });
+}
+function loadFlashcardsFromCloud(user) {
+  if (!user) return;
+  db.collection('users').doc(user.uid).get().then(doc => {
+    if (doc.exists && doc.data().flashcards) {
+      flashcards = doc.data().flashcards;
+      localStorage.setItem('flashcards', JSON.stringify(flashcards));
+      renderFlashcards();
+    }
+  });
+}
+// Listen for auth state changes and sync flashcards
+auth.onAuthStateChanged(user => {
+  if (user) {
+    showUser(user);
+    loadFlashcardsFromCloud(user);
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('auth-section').style.display = 'none';
+  } else {
+    hideUser();
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('auth-section').style.display = 'block';
+  }
+});
+// Save to cloud whenever flashcards change (for logged-in users)
+function saveFlashcards() {
+  localStorage.setItem('flashcards', JSON.stringify(flashcards));
+  renderFlashcards();
+  if (auth.currentUser) saveFlashcardsToCloud(auth.currentUser, flashcards);
+}
   </script>
 </body>
 </html>
