@@ -202,12 +202,115 @@
       color: #6366f1;
       text-decoration: underline;
     }
+
+    .info-section {
+      max-width: 700px;
+      margin: 2.5rem auto 2rem auto;
+      padding: 2rem 1.5rem;
+      background: linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 24px #6366f122;
+    }
+    .info-section h2 {
+      color: #6366f1;
+      text-align: center;
+      margin-bottom: 0.7em;
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .info-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.2em 0;
+    }
+    .info-section li {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.1em;
+    }
+    .info-section li span {
+      font-size: 1.5em;
+      margin-right: 0.7em;
+    }
+    .info-section .highlight {
+      color: #4338ca;
+      font-size: 1.13em;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .flashcards-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0 2rem 0;
+    }
+    .flashcard {
+      background: linear-gradient(120deg, #f3f4f6 60%, #e0e7ff 100%);
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 16px #6366f122;
+      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      transition: box-shadow 0.3s, transform 0.3s;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1.5px solid #a5b4fc;
+    }
+    .flashcard:hover {
+      box-shadow: 0 8px 32px #6366f144;
+      transform: scale(1.04) translateY(-6px) rotate(-1deg);
+      z-index: 2;
+    }
+    .flashcard .question {
+      font-size: 1.13em;
+      font-weight: 600;
+      color: #4338ca;
+      margin-bottom: 1.1em;
+      letter-spacing: 0.01em;
+    }
+    .flashcard .answer {
+      font-size: 1.05em;
+      color: #22223b;
+      background: #e0e7ff;
+      border-radius: 0.7em;
+      padding: 0.7em 1em;
+      margin-top: 0.5em;
+      box-shadow: 0 1px 4px #6366f111;
+      display: none;
+      transition: all 0.3s;
+    }
+    .flashcard.show-answer .answer {
+      display: block;
+      animation: fadeInAnswer 0.5s;
+    }
+    @keyframes fadeInAnswer {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Developer Info Modal/Section */
+    .dev-modal-bg { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(60,62,100,0.18); z-index:1000; align-items:center; justify-content:center; }
+    .dev-modal-bg.active { display:flex; }
+    .dev-card { background:#fff; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; padding:2.5rem 2rem 2rem 2rem; max-width:400px; text-align:center; margin:2rem auto; position:relative; }
+    .dev-card h1 { color:#6366f1; margin-bottom:0.5rem; font-size:2.1rem; }
+    .dev-card p { color:#444; font-size:1.1rem; margin-bottom:1.2rem; }
+    .dev-links a { display:inline-block; margin:0.5rem 0.7rem; color:#6366f1; text-decoration:none; font-weight:500; transition:color 0.2s; }
+    .dev-links a:hover { color:#4338ca; text-decoration:underline; }
+    .dev-close { position:absolute; top:0.7rem; right:1.1rem; font-size:1.5em; color:#6366f1; background:none; border:none; cursor:pointer; }
+    @media (max-width:500px) { .dev-card { padding:1.2rem 0.5rem; } }
   </style>
 </head>
 <body class="light">
   <div class="container">
     <header>
-      <img src="https://raw.githubusercontent.com/pranitdandewarofficial/flashcards/main/pranit.jpeg" alt="Developer photo" style="width:140px; height:180px; object-fit:cover; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122;" loading="lazy">
+      <img src="pranit.jpeg" alt="Developer photo" style="width:140px; height:180px; object-fit:cover; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; margin-bottom:1rem;" />
+      <div style="font-size:1.1em; color:#6366f1; margin-bottom:0.5rem; font-weight:500;">Hi, me PRANIT!</div>
       <h1>🧠 FlashLearn AI</h1>
       <p style="text-align:center">Smart Flashcards for IIT JEE & NEET</p>
       <button id="theme-toggle">Toggle Dark Mode</button>
@@ -218,8 +321,50 @@
       <button id="generate-btn">Generate Flashcards</button>
     </section>
 
-    <section class="flashcards" id="flashcards"></section>
+    <section class="flashcards-section" id="flashcards"></section>
     <div id="status-message" style="text-align:center; margin-top:1.5rem; color:#ef4444; font-weight:500;"></div>
+
+    <div id="info-section" style="max-width:700px;margin:2.5rem auto 2rem auto;padding:2rem 1.5rem;background:linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);border-radius:1.5rem;box-shadow:0 4px 24px #6366f122;">
+      <h2 style="color:#6366f1;text-align:center;margin-bottom:0.7em;font-size:2em;font-weight:700;letter-spacing:0.01em;">Why Use Flashcards?</h2>
+      <ul style="list-style:none;padding:0;margin:0 0 1.2em 0;">
+        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
+          <span style="font-size:1.5em;margin-right:0.7em;">🧠</span>
+          <span><strong>Active Recall:</strong> Test yourself and boost memory retention by flipping cards and recalling answers.</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
+          <span style="font-size:1.5em;margin-right:0.7em;">⏱️</span>
+          <span><strong>Spaced Repetition:</strong> Review cards regularly to master tough concepts and never forget what matters.</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
+          <span style="font-size:1.5em;margin-right:0.7em;">📚</span>
+          <span><strong>Organized Learning:</strong> Group flashcards by chapter or topic for focused, efficient revision.</span>
+        </li>
+        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
+          <span style="font-size:1.5em;margin-right:0.7em;">✨</span>
+          <span><strong>AI-Powered:</strong> Instantly generate high-quality flashcards for any subject or exam, tailored to your needs.</span>
+        </li>
+      </ul>
+      <div style="text-align:center;color:#4338ca;font-size:1.13em;font-weight:500;">Start learning smarter, not harder. Your journey to AIR 1 starts here!</div>
+    </div>
+
+    <!-- Developer Info Modal/Section -->
+    <div style="text-align:center; margin:2.5rem 0 1.5rem 0;">
+      <button id="showDevBtn" style="background:#6366f1;color:#fff;padding:0.5em 1.3em;border-radius:1.2em;font-size:1em;font-weight:500;border:none;box-shadow:0 2px 8px #6366f133;cursor:pointer;">About the Developer</button>
+    </div>
+    <div class="dev-modal-bg" id="devModal">
+      <div class="dev-card">
+        <button class="dev-close" id="closeDevBtn" title="Close">&times;</button>
+        <img src="https://raw.githubusercontent.com/pranitdandewarofficial/flashcards/main/pranit.jpeg" alt="Developer photo" loading="lazy" style="width:110px;height:140px;object-fit:cover;border-radius:1.1rem;box-shadow:0 2px 12px #6366f122;margin-bottom:1rem;" />
+        <h1>PRANIT</h1>
+        <p>Developer of FlashLearn AI.<br>Passionate about helping AIR 1 IIT JEE aspirants achieve their dreams with smart, AI-powered learning tools.</p>
+        <div class="dev-links">
+          <a href="mailto:busines.pranit@email.com">Email</a>
+          <a href="https://github.com/pranitdandewarofficial" target="_blank">GitHub</a>
+          <a href="https://twitter.com/pranitdandewar" target="_blank">Twitter</a>
+          <a href="https://linkedin.com/in/yourlinkedin" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </div>
 
     <footer>
       Made for <strong>AIR 1 IIT JEE Aspirants</strong> | Developed by <a href="developer.html">PRANIT</a>
@@ -294,37 +439,17 @@
 
       cards.forEach((card, index) => {
         const cardElement = document.createElement('div');
-        cardElement.className = 'card';
+        cardElement.className = 'flashcard';
         cardElement.dataset.index = index;
 
         cardElement.innerHTML = `
-          <div class="card-inner">
-            <div class="card-front">
-              <span>${card.topic}</span>
-              <p>${card.front}</p>
-            </div>
-            <div class="card-back">
-              <span>Answer</span>
-              <p>${card.back}</p>
-            </div>
-          </div>
-          <button class="delete-btn" title="Delete">&times;</button>
+          <div class="question">${card.front}</div>
+          <div class="answer">${card.back}</div>
         `;
 
-        // Add click event for flipping
+        // Add click event for showing answer
         cardElement.addEventListener('click', (e) => {
-          if (!e.target.closest('.delete-btn')) {
-            cardElement.classList.toggle('flipped');
-          }
-        });
-
-        // Add delete button functionality
-        const deleteBtn = cardElement.querySelector('.delete-btn');
-        deleteBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          cards.splice(index, 1);
-          saveCards();
-          renderCards();
+          cardElement.classList.toggle('show-answer');
         });
 
         flashcardsContainer.appendChild(cardElement);
@@ -451,6 +576,41 @@
 
     // Uncomment to test with mock cards without Gemini API
     // testMockCards();
+
+    (function() {
+      // Only show info section if not dismissed before
+      if (localStorage.getItem('hideInfoSection')) {
+        document.getElementById('info-section').style.display = 'none';
+      }
+      // Hide info section after flashcards are generated or viewed
+      function hideInfoSection() {
+        document.getElementById('info-section').style.display = 'none';
+        localStorage.setItem('hideInfoSection', '1');
+      }
+      // Attach to flashcard generation and viewing events
+      document.addEventListener('DOMContentLoaded', function() {
+        var flashcardsSection = document.querySelector('.flashcards-section');
+        if (flashcardsSection) {
+          flashcardsSection.addEventListener('click', hideInfoSection, { once: true });
+        }
+        var genBtn = document.getElementById('generate-btn');
+        if (genBtn) {
+          genBtn.addEventListener('click', hideInfoSection, { once: true });
+        }
+      });
+    })();
+
+    // Developer info modal script
+    document.getElementById('showDevBtn').onclick = function() {
+      document.getElementById('devModal').classList.add('active');
+    };
+    document.getElementById('closeDevBtn').onclick = function() {
+      document.getElementById('devModal').classList.remove('active');
+    };
+    // Optional: close modal on background click
+    document.getElementById('devModal').onclick = function(e) {
+      if (e.target === this) this.classList.remove('active');
+    };
   </script>
 </body>
 </html>
