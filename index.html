@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlashLearn AI</title>
+  <title>FlashLearn AI - Enhanced</title>
   <style>
     :root {
       --bg-light: #f3f4f6;
@@ -13,18 +13,23 @@
       --text-light: #111827;
       --text-dark: #f9fafb;
       --accent: #6366f1;
+      --success: #22c55e;
+      --warning: #f59e42;
+      --danger: #ef4444;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', 'Roboto', sans-serif;
       transition: background-color 0.3s ease, color 0.3s ease;
       min-height: 100vh;
       padding: 2rem;
+      line-height: 1.6;
     }
 
     .container {
@@ -45,9 +50,43 @@
     header {
       text-align: center;
       margin-bottom: 2rem;
+      position: relative;
     }
 
-    header h1 {
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-img-container {
+      position: relative;
+      width: 140px;
+      height: 180px;
+    }
+
+    .header-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 24px #6366f122;
+      animation: photoPopIn 1.1s cubic-bezier(.4,2,.3,1);
+      transition: transform 0.35s cubic-bezier(.4,2,.3,1), box-shadow 0.35s;
+    }
+    
+    .header-img:hover {
+      transform: scale(1.07) rotate(-2deg) translateY(-6px);
+      box-shadow: 0 8px 32px #6366f144;
+    }
+    
+    @keyframes photoPopIn {
+      from { opacity: 0; transform: scale(0.7) translateY(40px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    h1 {
       font-size: 2.5rem;
       text-align: center;
       background: linear-gradient(90deg, #6366f1, #ec4899);
@@ -58,23 +97,12 @@
       padding: 0.5rem 0 0.25rem;
     }
 
-    header img {
-      width: 140px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 1.2rem;
-      box-shadow: 0 4px 24px #6366f122;
-      margin-bottom: 1rem;
-      animation: photoPopIn 1.1s cubic-bezier(.4,2,.3,1);
-      transition: transform 0.35s cubic-bezier(.4,2,.3,1), box-shadow 0.35s;
-    }
-    header img:hover {
-      transform: scale(1.07) rotate(-2deg) translateY(-6px);
-      box-shadow: 0 8px 32px #6366f144;
-    }
-    @keyframes photoPopIn {
-      from { opacity: 0; transform: scale(0.7) translateY(40px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .generator {
@@ -88,9 +116,16 @@
       padding: 0.75rem;
       font-size: 1rem;
       border-radius: 0.5rem;
-      border: 1px solid #ccc;
+      border: 1px solid #d1d5db;
       width: 100%;
       font-family: inherit;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    #topic-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
     }
 
     #generate-btn {
@@ -101,201 +136,176 @@
       background: var(--accent);
       color: white;
       cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.3s ease;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
+    
     #generate-btn:hover {
-      transform: scale(1.03);
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    
     #generate-btn:disabled {
       opacity: 0.7;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
-    #topic-input:focus {
-      outline: none;
-      border-color: #6366f1;
-    }
-    .card {
-      perspective: 1000px;
-      height: 200px;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-    .card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-    .card-front,
-    .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 1rem;
+
+    .controls {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      text-align: center;
-      background: white;
-      color: black;
-      transition: all 0.3s ease;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    .card-back {
-      background: #c7d2fe;
-      transform: rotateY(180deg);
-      color: #111827;
+
+    .control-group {
+      display: flex;
+      gap: 0.5rem;
     }
-    .card-front span {
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .card-front p,
-    .card-back p {
-      font-weight: 600;
-      font-size: 1.1rem;
-      line-height: 1.4;
-    }
-    .delete-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background: #ef4444;
+
+    .btn-primary {
+      background: var(--accent);
       color: white;
       border: none;
-      border-radius: 9999px;
-      width: 1.5rem;
-      height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .delete-btn:hover {
-      transform: scale(1.1);
-    }
-    .delete-btn:focus {
-      outline: 2px solid #ef4444;
-      box-shadow: 0 0 0 3px #ef444488;
     }
 
-    footer {
-      margin-top: 2.5rem;
-      text-align: center;
-      color: #6366f1;
-      font-size: 1.05em;
-    }
-    footer a {
-      color: #6366f1;
-      text-decoration: underline;
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
     }
 
-    .info-section {
-      max-width: 700px;
-      margin: 2.5rem auto 2rem auto;
-      padding: 2rem 1.5rem;
-      background: linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);
-      border-radius: 1.5rem;
-      box-shadow: 0 4px 24px #6366f122;
-    }
-    .info-section h2 {
-      color: #6366f1;
-      text-align: center;
-      margin-bottom: 0.7em;
-      font-size: 2em;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-    .info-section ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 1.2em 0;
-    }
-    .info-section li {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 1.1em;
-    }
-    .info-section li span {
-      font-size: 1.5em;
-      margin-right: 0.7em;
-    }
-    .info-section .highlight {
-      color: #4338ca;
-      font-size: 1.13em;
-      font-weight: 500;
-      text-align: center;
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      border: none;
     }
 
-    /* Responsive and touch-friendly flashcards */
+    .btn-success {
+      background: var(--success);
+      color: white;
+      border: none;
+    }
+
+    .btn-warning {
+      background: var(--warning);
+      color: white;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Flashcard styles */
     .flashcards-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
       margin: 2.5rem 0 2rem 0;
     }
+
     .flashcard {
       background: linear-gradient(120deg, #f3f4f6 60%, #e0e7ff 100%);
       border-radius: 1.2rem;
       box-shadow: 0 4px 16px #6366f122;
-      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
-      min-height: 180px;
+      padding: 1.5rem;
+      min-height: 200px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      justify-content: flex-start;
+      justify-content: space-between;
       position: relative;
-      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+      transition: all 0.3s ease;
       cursor: pointer;
       overflow: hidden;
       border: 1.5px solid #a5b4fc;
       touch-action: manipulation;
     }
+    
+    .dark .flashcard {
+      background: linear-gradient(120deg, #1f2937 60%, #374151 100%);
+      border-color: #4b5563;
+    }
+    
     .flashcard:hover, .flashcard:focus-within {
       box-shadow: 0 8px 32px #6366f144;
       transform: scale(1.04) translateY(-6px) rotate(-1deg);
       z-index: 2;
     }
+    
+    .flashcard.show-answer {
+      transform: scale(1.03);
+      box-shadow: 0 8px 32px #6366f144;
+    }
+    
     .flashcard .question {
-      font-size: 1.13em;
+      font-size: 1.15em;
       font-weight: 600;
       color: #4338ca;
       margin-bottom: 1.1em;
       letter-spacing: 0.01em;
+      width: 100%;
     }
+    
+    .dark .flashcard .question {
+      color: #a5b4fc;
+    }
+    
     .flashcard .answer {
       font-size: 1.05em;
       color: #22223b;
       background: #e0e7ff;
       border-radius: 0.7em;
       padding: 0.7em 1em;
-      margin-top: 0.5em;
       box-shadow: 0 1px 4px #6366f111;
       display: none;
+      width: 100%;
       transition: all 0.3s;
     }
+    
+    .dark .flashcard .answer {
+      background: #374151;
+      color: #f3f4f6;
+    }
+    
     .flashcard.show-answer .answer {
       display: block;
       animation: fadeInAnswer 0.5s;
     }
+    
     .flashcard .actions {
       margin-top: 1em;
       display: flex;
       gap: 0.7em;
+      width: 100%;
+      justify-content: flex-end;
     }
+    
     .flashcard .actions button {
       background: #6366f1;
       color: #fff;
@@ -306,16 +316,36 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    .flashcard .actions button.known { background: #22c55e; }
-    .flashcard .actions button.difficult { background: #ef4444; }
-    .flashcard .actions button.edit { background: #f59e42; }
+    
+    .flashcard .actions button.known { background: var(--success); }
+    .flashcard .actions button.difficult { background: var(--danger); }
+    .flashcard .actions button.edit { background: var(--warning); }
     .flashcard .actions button.delete { background: #6366f1; }
-    .flashcard .actions button:focus { outline: 2px solid #6366f1; }
+    
+    .flashcard .actions button:focus { 
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    
     @keyframes fadeInAnswer {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     /* Progress bar */
+    .progress-section {
+      background: rgba(199, 210, 254, 0.3);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
     .progress-bar {
       width: 100%;
       background: #e0e7ff;
@@ -324,12 +354,24 @@
       height: 1.1em;
       overflow: hidden;
     }
+    
+    .dark .progress-bar {
+      background: #374151;
+    }
+    
     .progress-bar-inner {
       height: 100%;
       background: linear-gradient(90deg, #6366f1, #22c55e);
       border-radius: 1em;
       transition: width 0.5s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
     }
+    
     /* Motivational quote */
     .motivation {
       text-align: center;
@@ -337,35 +379,37 @@
       font-size: 1.13em;
       font-weight: 500;
       margin: 1.5em 0 0.5em 0;
+      font-style: italic;
     }
-    /* Accessibility: high contrast for focus */
-    .flashcard:focus-within { outline: 2px solid #6366f1; }
-    /* Theme and font size personalization */
-    .theme-toggle, .font-toggle {
-      background: #6366f1;
-      color: #fff;
-      border: none;
-      border-radius: 1em;
-      padding: 0.4em 1.1em;
-      margin: 0 0.5em;
-      font-size: 1em;
-      cursor: pointer;
-      margin-bottom: 1em;
+    
+    .dark .motivation {
+      color: #a5b4fc;
     }
+
+    /* Search/filter bar */
     .search-bar {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       margin: 1em auto 1.5em auto;
       display: flex;
       gap: 0.5em;
     }
+    
     .search-bar input {
       flex: 1;
       padding: 0.6em 1em;
       border-radius: 0.7em;
       border: 1.5px solid #a5b4fc;
       font-size: 1em;
+      background: white;
     }
+    
+    .dark .search-bar input {
+      background: #1f2937;
+      border-color: #4b5563;
+      color: white;
+    }
+    
     .search-bar button {
       background: #6366f1;
       color: #fff;
@@ -374,792 +418,952 @@
       padding: 0.3em 1em;
       font-size: 1em;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .search-bar button:hover {
+      background: #4f46e5;
     }
 
-    @keyframes fadeIn { from { opacity:0; transform:scale(0.95);} to { opacity:1; transform:scale(1);} }
-    @keyframes imgPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
-    .dev-modal-bg { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.65); z-index:1000; align-items:center; justify-content:center; }
-    .dev-modal-bg.active { display:flex !important; }
-    .dev-card { background:#fff; padding:3em 2.5em 2em 2.5em; border-radius:1.7em; box-shadow:0 12px 40px #6366f155; max-width:420px; margin:auto; position:relative; text-align:center; animation:fadeIn 0.5s; }
-    .dev-close { position:absolute; top:0.7em; right:1em; background:none; border:none; font-size:2em; color:#6366f1; cursor:pointer; }
-    .dev-links a { color:#6366f1; text-decoration:none; font-weight:500; margin-bottom:0.3em; transition:color 0.2s; }
-    .dev-links a:hover { color:#ec4899; }
-    .dev-links { margin-top:1.2em; display:flex; flex-direction:column; gap:0.7em; }
-    .dev-img-animate { animation: imgPop 0.8s cubic-bezier(.4,2,.3,1); }
+    /* Status messages */
+    .status-message {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      display: none;
+    }
+    
+    .status-success {
+      background-color: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    
+    .status-error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    
+    .status-info {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
 
-    .dev-card, .flashcard, .theme-toggle, .font-toggle, #generate-btn, .dev-close, .dev-links a {
-      transition: box-shadow 0.3s, background 0.3s, color 0.2s, transform 0.2s;
+    /* Info section */
+    .info-section {
+      max-width: 700px;
+      margin: 2.5rem auto 2rem auto;
+      padding: 2rem 1.5rem;
+      background: linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 24px #6366f122;
     }
-    .dev-links a:focus, .dev-close:focus {
-      outline: 2px solid #6366f1;
-      outline-offset: 2px;
+    
+    .dark .info-section {
+      background: linear-gradient(120deg,#1f2937 60%,#111827 100%);
     }
+    
+    .info-section h2 {
+      color: #6366f1;
+      text-align: center;
+      margin-bottom: 0.7em;
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    
+    .info-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.2em 0;
+    }
+    
+    .info-section li {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.1em;
+    }
+    
+    .info-section li span {
+      font-size: 1.5em;
+      margin-right: 0.7em;
+      min-width: 30px;
+    }
+    
+    .info-section .highlight {
+      color: #4338ca;
+      font-size: 1.13em;
+      font-weight: 500;
+      text-align: center;
+    }
+    
+    .dark .info-section .highlight {
+      color: #a5b4fc;
+    }
+
+    /* Developer modal */
+    .dev-modal-bg {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(30,41,59,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .dev-modal-bg.active {
+      display: flex !important;
+    }
+    
     .dev-card {
-      background: var(--card-light);
-      color: var(--text-light);
+      background: #fff;
+      padding: 3em 2.5em 2em 2.5em;
+      border-radius: 1.7em;
+      box-shadow: 0 12px 40px #6366f155;
+      max-width: 420px;
+      margin: auto;
+      position: relative;
+      text-align: center;
+      animation: fadeIn 0.5s;
     }
-    body.dark .dev-card {
-      background: var(--card-dark);
-      color: var(--text-dark);
+    
+    .dark .dev-card {
+      background: #1f2937;
+      color: #f9fafb;
     }
+    
+    .dev-close {
+      position: absolute;
+      top: 0.7em;
+      right: 1em;
+      background: none;
+      border: none;
+      font-size: 2em;
+      color: #6366f1;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .dev-close:hover {
+      transform: scale(1.1);
+    }
+    
     .dev-links a {
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 0.3em;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.5em 1em;
       border-radius: 0.5em;
-      padding: 0.3em 0.7em;
     }
+    
     .dev-links a:hover {
       background: #e0e7ff;
       color: #4338ca;
-      transform: translateY(-2px) scale(1.04);
+      transform: translateY(-2px);
     }
-    body.dark .dev-links a:hover {
-      background: #1f2937;
+    
+    .dark .dev-links a:hover {
+      background: #374151;
       color: #a5b4fc;
     }
-    .flashcard {
-      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+    
+    .dev-links {
+      margin-top: 1.2em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
     }
-    .flashcard:focus-within, .flashcard:hover {
-      box-shadow: 0 8px 32px #6366f144;
-      transform: scale(1.04) translateY(-6px) rotate(-1deg);
+    
+    .dev-img-animate {
+      animation: imgPop 0.8s cubic-bezier(.4,2,.3,1);
     }
-    .theme-toggle, .font-toggle, #generate-btn {
-      transition: background 0.3s, color 0.2s, transform 0.2s;
+    
+    @keyframes fadeIn {
+      from { opacity:0; transform:scale(0.95);} 
+      to { opacity:1; transform:scale(1);}
     }
-    .theme-toggle:focus, .font-toggle:focus, #generate-btn:focus {
-      outline: 2px solid #6366f1;
-      outline-offset: 2px;
+    
+    @keyframes imgPop { 
+      0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 
+      60% { transform: scale(1.1) rotate(2deg); opacity: 1; } 
+      100% { transform: scale(1) rotate(0); opacity: 1; } 
+    }
+
+    /* Loading spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      display: none;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Auth section */
+    .auth-section {
+      text-align: center;
+      margin: 2em 0 1.5em 0;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: rgba(199, 210, 254, 0.2);
+    }
+    
+    .auth-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .auth-btn {
+      background: #fff;
+      color: #6366f1;
+      border: 1.5px solid #6366f1;
+      padding: 0.6em 1.2em;
+      border-radius: 1em;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    
+    .auth-btn:hover {
+      background: #e0e7ff;
+      transform: translateY(-2px);
+    }
+    
+    .auth-btn.github {
+      color: #22223b;
+      border-color: #22223b;
+    }
+    
+    .auth-btn.github:hover {
+      background: #f3f4f6;
+    }
+    
+    .user-info {
+      margin-bottom: 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+      border: 2px solid #6366f1;
+    }
+    
+    /* Footer */
+    footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      color: #6366f1;
+      font-size: 1.05em;
+      padding: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .dark footer {
+      border-color: #374151;
+    }
+    
+    footer a {
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+      color: #4f46e5;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .header-img-container {
+        width: 120px;
+        height: 160px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .flashcards-section {
+        grid-template-columns: 1fr;
+      }
+      
+      .search-bar {
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .auth-buttons {
+        flex-direction: column;
+      }
+      
+      .auth-btn {
+        justify-content: center;
+      }
     }
   </style>
-  <!-- Font Awesome CDN for brand icons -->
+  <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Firebase App (the core Firebase SDK) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="light">
-    <div id="auth-section" style="text-align:center;margin:2em 0 1.5em 0;"></div>
-    <div class="container" id="main-content" style="display:none;">
-    <header>
-      <img src="pranit.jpeg" alt="Developer photo" style="width:140px; height:180px; object-fit:cover; border-radius:1.2rem; box-shadow:0 4px 24px #6366f122; margin-bottom:1rem;" />
-      <div style="font-size:1.1em; color:#6366f1; margin-bottom:0.5rem; font-weight:500;">Hi, me PRANIT!</div>
-      <h1>🧠 FlashLearn AI</h1>
-      <p style="text-align:center">Smart Flashcards for IIT JEE & NEET</p>
-      <button id="theme-toggle">Toggle Dark Mode</button>
-    </header>
-
-    <section class="generator">
-      <input type="text" id="topic-input" placeholder="Enter topic like 'Photosynthesis' or 'Newton's Laws'" />
-      <button id="generate-btn">Generate Flashcards</button>
-    </section>
-
-    <!-- Theme and font size toggles -->
-    <div style="text-align:right;max-width:900px;margin:auto;">
-      <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
-      <button class="font-toggle" onclick="toggleFontSize()">A+</button>
-    </div>
-    <!-- Motivational quote -->
-    <div class="motivation" id="motivationQuote">"Success is the sum of small efforts, repeated day in and day out."</div>
-    <!-- Progress bar -->
-    <div class="progress-bar"><div class="progress-bar-inner" id="progressBarInner" style="width:0%"></div></div>
-    <!-- Search/filter bar -->
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search flashcards..." aria-label="Search flashcards" />
-      <button onclick="searchFlashcards()">Search</button>
-      <button onclick="resetSearch()">Reset</button>
-    </div>
-
-    <section class="flashcards-section" id="flashcardsSection" style="display:none;"></section>
-    <div id="status-message" style="text-align:center; margin-top:1.5rem; color:#ef4444; font-weight:500;"></div>
-
-    <div id="info-section" style="max-width:700px;margin:2.5rem auto 2rem auto;padding:2rem 1.5rem;background:linear-gradient(120deg,#e0e7ff 60%,#f3f4f6 100%);border-radius:1.5rem;box-shadow:0 4px 24px #6366f122;">
-      <h2 style="color:#6366f1;text-align:center;margin-bottom:0.7em;font-size:2em;font-weight:700;letter-spacing:0.01em;">Why Use Flashcards?</h2>
-      <ul style="list-style:none;padding:0;margin:0 0 1.2em 0;">
-        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
-          <span style="font-size:1.5em;margin-right:0.7em;">🧠</span>
-          <span><strong>Active Recall:</strong> Test yourself and boost memory retention by flipping cards and recalling answers.</span>
-        </li>
-        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
-          <span style="font-size:1.5em;margin-right:0.7em;">⏱️</span>
-          <span><strong>Spaced Repetition:</strong> Review cards regularly to master tough concepts and never forget what matters.</span>
-        </li>
-        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
-          <span style="font-size:1.5em;margin-right:0.7em;">📚</span>
-          <span><strong>Organized Learning:</strong> Group flashcards by chapter or topic for focused, efficient revision.</span>
-        </li>
-        <li style="display:flex;align-items:flex-start;margin-bottom:1.1em;">
-          <span style="font-size:1.5em;margin-right:0.7em;">✨</span>
-          <span><strong>AI-Powered:</strong> Instantly generate high-quality flashcards for any subject or exam, tailored to your needs.</span>
-        </li>
-      </ul>
-      <div style="text-align:center;color:#4338ca;font-size:1.13em;font-weight:500;">Start learning smarter, not harder. Your journey to AIR 1 starts here!</div>
-    </div>
-
-    <!-- Developer Info Modal/Section -->
-    <div style="text-align:center; margin:2.5rem 0 1.5rem 0;">
-      <button id="showDevBtn" style="background:#6366f1;color:#fff;padding:0.5em 1.3em;border-radius:1.2em;font-size:1em;font-weight:500;border:none;box-shadow:0 2px 8px #6366f133;cursor:pointer;">About the Developer</button>
-    </div>
-    <div class="dev-modal-bg" id="devModal">
-      <div class="dev-card" style="background:#fff;padding:3em 2.5em 2em 2.5em;border-radius:1.7em;box-shadow:0 12px 40px #6366f155;max-width:420px;margin:auto;position:relative;text-align:center;animation:fadeIn 0.5s;">
-        <button class="dev-close" id="closeDevBtn" title="Close">&times;</button>
-        <img src="https://github.com/pranitdandewarofficial/flashcards/blob/c3a4e8f61a52db196443ac68c6411c385157264f/pranit.jpeg?raw=true" alt="Developer photo" loading="eager" class="dev-img-animate" style="width:150px;height:190px;object-fit:cover;border-radius:1.3rem;box-shadow:0 4px 18px #6366f122;margin-bottom:1.2rem;" />
-        <h1 style="color:#6366f1;font-size:2em;margin:0.7em 0 0.3em 0;letter-spacing:0.01em;">PRANIT DANDEWAR</h1>
-        <p style="color:#22223b;font-size:1.18em;line-height:1.5;">Developer of <b>FlashLearn AI</b>.<br>Passionate about helping students achieve their dreams with smart, AI-powered learning tools.<br><span style='color:#6366f1;font-size:1.05em;'>Let's connect and build the future of learning!</span></p>
-        <div class="dev-links" style="margin-top:1em;display:flex;flex-direction:column;gap:0.5em;">
-          <a href="mailto:busines.pranit@email.com" title="Email" aria-label="Email" style="display:flex;align-items:center;gap:0.5em;"><i class="fa-solid fa-envelope"></i>Email</a>
-          <a href="https://github.com/pranitdandewarofficial" target="_blank" title="GitHub" aria-label="GitHub" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-github"></i>GitHub</a>
-          <a href="https://twitter.com/pranitdandewar" target="_blank" title="Twitter" aria-label="Twitter" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-twitter"></i>Twitter</a>
-          <a href="https://linkedin.com/in/yourlinkedin" target="_blank" title="LinkedIn" aria-label="LinkedIn" style="display:flex;align-items:center;gap:0.5em;"><i class="fab fa-linkedin"></i>LinkedIn</a>
-        </div>
+  <div class="container">
+    <!-- Authentication Section -->
+    <div id="auth-section" class="auth-section">
+      <div id="user-info" class="user-info" style="display: none;">
+        <img id="user-avatar" class="user-avatar" src="" alt="User Avatar">
+        <div id="user-name"></div>
+      </div>
+      <p>Sign in to save your flashcards and track progress</p>
+      <div class="auth-buttons">
+        <button id="login-google" class="auth-btn">
+          <i class="fab fa-google"></i> Sign in with Google
+        </button>
+        <button id="login-github" class="auth-btn github">
+          <i class="fab fa-github"></i> Sign in with GitHub
+        </button>
+        <button id="logout-btn" class="auth-btn" style="display: none;">
+          <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </button>
       </div>
     </div>
 
-    <!-- Authentication Section -->
-    <div id="auth-section" style="text-align:center;margin:2em 0 1.5em 0;">
-      <div id="user-info" style="display:none;margin-bottom:1em;"></div>
-      <button id="login-google" style="background:#fff;color:#6366f1;border:1.5px solid #6366f1;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fab fa-google"></i> Sign in with Google</button>
-      <button id="login-github" style="background:#fff;color:#22223b;border:1.5px solid #22223b;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fab fa-github"></i> Sign in with GitHub</button>
-      <button id="login-email" style="background:#fff;color:#6366f1;border:1.5px solid #6366f1;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fa-solid fa-envelope"></i> Sign in with Email</button>
-      <button id="logout-btn" style="display:none;background:#ef4444;color:#fff;border:none;padding:0.6em 1.2em;border-radius:1em;font-size:1em;cursor:pointer;margin:0 0.5em 0.5em 0;"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
-    </div>
+    <!-- Main Content -->
+    <div id="main-content" style="display: none;">
+      <header>
+        <div class="header-content">
+          <div class="header-img-container">
+            <img src="https://github.com/pranitdandewarofficial/flashcards/blob/c3a4e8f61a52db196443ac68c6411c385157264f/pranit.jpeg?raw=true" 
+                 alt="Developer photo" class="header-img">
+          </div>
+          <div style="font-size:1.1em; color:#6366f1; margin-bottom:0.5rem; font-weight:500;">Hi, I'm PRANIT!</div>
+          <h1>🧠 FlashLearn AI</h1>
+          <p class="subtitle">Smart Flashcards for IIT JEE & NEET</p>
+        </div>
+      </header>
 
-    <footer>
-      Made for <strong>AIR 1 IIT JEE Aspirants</strong> | Developed by <a href="developer.html">PRANIT</a>
-    </footer>
+      <section class="generator">
+        <input type="text" id="topic-input" placeholder="Enter topic like 'Photosynthesis' or 'Newton's Laws'" aria-label="Topic for flashcards">
+        <button id="generate-btn">
+          <i class="fas fa-bolt"></i> Generate Flashcards
+          <div class="spinner" id="generate-spinner"></div>
+        </button>
+      </section>
+
+      <!-- Status Message -->
+      <div id="status-message" class="status-message"></div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="control-group">
+          <button id="theme-toggle" class="btn btn-secondary">
+            <i class="fas fa-moon"></i> Dark Mode
+          </button>
+          <button id="font-toggle" class="btn btn-secondary">
+            <i class="fas fa-text-height"></i> A+
+          </button>
+        </div>
+        <div class="control-group">
+          <button id="shuffle-btn" class="btn btn-secondary">
+            <i class="fas fa-random"></i> Shuffle
+          </button>
+          <button id="export-btn" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <h3>Your Progress</h3>
+          <span id="progress-text">0% Complete</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-inner" id="progressBarInner" style="width: 0%">0%</div>
+        </div>
+        <p class="motivation" id="motivationQuote">"Success is the sum of small efforts, repeated day in and day out."</p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search flashcards..." aria-label="Search flashcards">
+        <button onclick="searchFlashcards()">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <button onclick="resetSearch()">
+          <i class="fas fa-sync"></i> Reset
+        </button>
+      </div>
+
+      <!-- Flashcards Container -->
+      <section class="flashcards-section" id="flashcardsSection"></section>
+
+      <!-- Info Section -->
+      <div class="info-section">
+        <h2>Why Use Flashcards?</h2>
+        <ul>
+          <li>
+            <span>🧠</span>
+            <span><strong>Active Recall:</strong> Test yourself and boost memory retention by flipping cards and recalling answers.</span>
+          </li>
+          <li>
+            <span>⏱️</span>
+            <span><strong>Spaced Repetition:</strong> Review cards regularly to master tough concepts and never forget what matters.</span>
+          </li>
+          <li>
+            <span>📚</span>
+            <span><strong>Organized Learning:</strong> Group flashcards by chapter or topic for focused, efficient revision.</span>
+          </li>
+          <li>
+            <span>✨</span>
+            <span><strong>AI-Powered:</strong> Instantly generate high-quality flashcards for any subject or exam, tailored to your needs.</span>
+          </li>
+        </ul>
+        <div class="highlight">Start learning smarter, not harder. Your journey to AIR 1 starts here!</div>
+      </div>
+
+      <!-- Developer Info Modal -->
+      <div style="text-align:center; margin:2.5rem 0 1.5rem 0;">
+        <button id="showDevBtn" class="btn btn-primary">
+          <i class="fas fa-user"></i> About the Developer
+        </button>
+      </div>
+      <div class="dev-modal-bg" id="devModal">
+        <div class="dev-card">
+          <button class="dev-close" id="closeDevBtn" title="Close">&times;</button>
+          <img src="https://github.com/pranitdandewarofficial/flashcards/blob/c3a4e8f61a52db196443ac68c6411c385157264f/pranit.jpeg?raw=true" 
+               alt="Developer photo" loading="eager" class="dev-img-animate" 
+               style="width:150px;height:190px;object-fit:cover;border-radius:1.3rem;box-shadow:0 4px 18px #6366f122;margin-bottom:1.2rem;">
+          <h1 style="color:#6366f1;font-size:2em;margin:0.7em 0 0.3em 0;letter-spacing:0.01em;">PRANIT DANDEWAR</h1>
+          <p style="color:#22223b;font-size:1.18em;line-height:1.5;">
+            Developer of <b>FlashLearn AI</b>.<br>Passionate about helping students achieve their dreams with smart, AI-powered learning tools.<br>
+            <span style='color:#6366f1;font-size:1.05em;'>Let's connect and build the future of learning!</span>
+          </p>
+          <div class="dev-links">
+            <a href="mailto:busines.pranit@email.com" title="Email" aria-label="Email">
+              <i class="fa-solid fa-envelope"></i>Email
+            </a>
+            <a href="https://github.com/pranitdandewarofficial" target="_blank" title="GitHub" aria-label="GitHub">
+              <i class="fab fa-github"></i>GitHub
+            </a>
+            <a href="https://twitter.com/pranitdandewar" target="_blank" title="Twitter" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>Twitter
+            </a>
+            <a href="https://linkedin.com/in/yourlinkedin" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+              <i class="fab fa-linkedin"></i>LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Made for <strong>AIR 1 IIT JEE Aspirants</strong> | Developed by <a href="#" id="dev-link">PRANIT</a>
+      </footer>
+    </div>
   </div>
 
   <script>
-    const topicInput = document.getElementById("topic-input");
-    const generateBtn = document.getElementById("generate-btn");
-    const flashcardsContainer = document.getElementById("flashcardsSection");
-    const themeToggle = document.getElementById("theme-toggle");
-
-    let cards = [];
-    let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || "AIzaSyB7wqnH__VvoyrN-MIP7GhAWgRhrE48JtQ";
-    const statusMessage = document.getElementById('status-message');
-
-    // Load saved cards from localStorage
-    window.addEventListener('load', () => {
-      const savedCards = localStorage.getItem('flashcards');
-      if (savedCards) {
-        cards = JSON.parse(savedCards);
-        renderCards();
-      }
-
-      // Load saved theme
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.body.className = savedTheme;
-      themeToggle.textContent = savedTheme === 'dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
-    });
-
-    // Toggle light/dark mode
-    themeToggle.addEventListener("click", () => {
-      const body = document.body;
-      body.classList.toggle("dark");
-      body.classList.toggle("light");
-      
-      themeToggle.textContent = body.classList.contains("dark") ? "Toggle Light Mode" : "Toggle Dark Mode";
-      localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
-    });
-
-    // Save cards to localStorage and to a file by topic/chapter
-    function saveCards() {
-      localStorage.setItem('flashcards', JSON.stringify(cards));
-      // Save by chapter/topic
-      const byTopic = {};
-      cards.forEach(card => {
-        const topic = card.topic || 'General';
-        if (!byTopic[topic]) byTopic[topic] = [];
-        byTopic[topic].push(card);
-      });
-      Object.keys(byTopic).forEach(topic => {
-        const safeTopic = topic.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const fileName = `flashcards/${safeTopic}.json`;
-        // Save each topic's cards as a JSON file (AI managed)
-        window.saveFlashcardFile && window.saveFlashcardFile(fileName, JSON.stringify(byTopic[topic], null, 2));
-      });
-    }
-
-    // Render flashcards to the DOM
-    function renderCards() {
-      flashcardsContainer.innerHTML = '';
-      flashcardsContainer.style.display = cards.length > 0 ? 'grid' : 'none';
-      
-      if (cards.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.style.textAlign = 'center';
-        emptyMessage.style.marginTop = '2rem';
-        emptyMessage.style.gridColumn = '1 / -1';
-        emptyMessage.textContent = 'No flashcards yet. Enter a topic above!';
-        flashcardsContainer.appendChild(emptyMessage);
-        return;
-      }
-
-      cards.forEach((card, index) => {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'flashcard';
-        cardElement.dataset.index = index;
-
-        cardElement.innerHTML = `
-          <div class="question">${card.front}</div>
-          <div class="answer">${card.back}</div>
-        `;
-
-        // Add click event for showing answer
-        cardElement.addEventListener('click', (e) => {
-          cardElement.classList.toggle('show-answer');
-        });
-
-        flashcardsContainer.appendChild(cardElement);
-      });
-    }
-
-    // Generate flashcards using Gemini AI
-    async function generateFlashcardsWithGemini(input) {
-      statusMessage.textContent = '';
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `Generate 20 flashcards for the topic "${input}". Format them as JSON like this:\n[\n  { "question": "Question 1", "answer": "Answer 1" },\n  ...\n]`
-              }]
-            }]
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (!rawText) {
-          throw new Error("No response from Gemini");
-        }
-
-        let parsed;
-        try {
-          const cleanText = rawText
-            .replace(/```json\n?/, '')
-            .replace(/\n?```$/, '')
-            .trim();
-          parsed = JSON.parse(cleanText);
-        } catch (e) {
-          console.error("Gemini returned invalid JSON:", rawText);
-          throw new Error("Gemini returned invalid JSON");
-        }
-
-        parsed.forEach(c => {
-          cards.unshift({
-            id: Date.now() + Math.random(),
-            topic: input,
-            front: c.question,
-            back: c.answer,
-            flipped: false
-          });
-        });
-
-        saveCards();
-        renderCards();
-        statusMessage.textContent = '';
-      } catch (error) {
-        console.error(error);
-        if (error.message.includes('API error') || error.message.includes('No response') || error.message.includes('invalid JSON')) {
-          statusMessage.textContent = 'AI error: ' + error.message + '. Please check your API key.';
-          let newKey = prompt('Gemini API key invalid or quota exceeded. Enter a new Gemini API key:');
-          if (newKey) {
-            GEMINI_API_KEY = newKey;
-            localStorage.setItem('gemini_api_key', newKey);
-            statusMessage.textContent = 'Trying again with your new API key...';
-            await generateFlashcardsWithGemini(input);
-            return;
-          } else {
-            statusMessage.textContent = 'No valid API key provided. Cannot generate flashcards.';
-          }
-        } else {
-          statusMessage.textContent = 'Error: ' + error.message;
-        }
-        cards.unshift({
-          id: Date.now(),
-          topic: input,
-          front: `Error generating cards.`,
-          back: "Please try again later.",
-          flipped: false
-        });
-        saveCards();
-        renderCards();
-      } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = "Generate Flashcards";
-      }
-    }
-
-    // Event listener for generate button
-    generateBtn.addEventListener("click", () => {
-      const topic = topicInput.value.trim();
-      if (!topic) return;
-      
-      generateBtn.disabled = true;
-      generateBtn.textContent = "Generating...";
-      
-      generateFlashcardsWithGemini(topic);
-    });
-
-    // For development only - remove in production
-    function testMockCards() {
-      const mockCards = [
-        {
-          id: Date.now(),
-          topic: "Newton's Laws",
-          front: "What is Newton's First Law?",
-          back: "An object remains at rest or in uniform motion unless acted upon by a force."
-        },
-        {
-          id: Date.now() + 1,
-          topic: "Photosynthesis",
-          front: "Where does photosynthesis occur?",
-          back: "Chloroplasts in plant cells."
-        }
-      ];
-      
-      cards = [...mockCards, ...cards];
-      saveCards();
-      renderCards();
-    }
-
-    // Uncomment to test with mock cards without Gemini API
-    // testMockCards();
-
-    (function() {
-      // Only show info section if not dismissed before
-      if (localStorage.getItem('hideInfoSection')) {
-        document.getElementById('info-section').style.display = 'none';
-      }
-      // Hide info section after flashcards are generated or viewed
-      function hideInfoSection() {
-        document.getElementById('info-section').style.display = 'none';
-        localStorage.setItem('hideInfoSection', '1');
-      }
-      // Attach to flashcard generation and viewing events
-      document.addEventListener('DOMContentLoaded', function() {
-        var flashcardsSection = document.querySelector('.flashcards-section');
-        if (flashcardsSection) {
-          flashcardsSection.addEventListener('click', hideInfoSection, { once: true });
-        }
-        var genBtn = document.getElementById('generate-btn');
-        if (genBtn) {
-          genBtn.addEventListener('click', hideInfoSection, { once: true });
-        }
-      });
-    })();
-
-    // Developer info modal script
-    document.getElementById('showDevBtn').onclick = function() {
-      document.getElementById('devModal').classList.add('active');
-    };
-    document.getElementById('closeDevBtn').onclick = function() {
-      document.getElementById('devModal').classList.remove('active');
-    };
-    // Optional: close modal on background click
-    document.getElementById('devModal').onclick = function(e) {
-      if (e.target === this) this.classList.remove('active');
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBWXjy0y3xf_FjdPLoygm8IzPAsJkPP5Hs",
+      authDomain: "pranit-dandewar.firebaseapp.com",
+      projectId: "pranit-dandewar",
+      storageBucket: "pranit-dandewar.appspot.com",
+      messagingSenderId: "729828970412",
+      appId: "1:729828970412:web:8cb3b430139fa446baf409",
+      measurementId: "G-0FG5MCQ7TQ"
     };
 
-    // Keyboard accessibility for modal
-    document.getElementById('showDevBtn').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        document.getElementById('devModal').classList.add('active');
-        document.getElementById('closeDevBtn').focus();
-      }
-    });
-    document.getElementById('closeDevBtn').addEventListener('keydown', function(e) {
-      if (e.key === 'Tab' && e.shiftKey) {
-        e.preventDefault();
-        document.getElementById('showDevBtn').focus();
-      }
-    });
-    // Trap focus inside modal when open
-    document.getElementById('devModal').addEventListener('keydown', function(e) {
-      if (e.key === 'Tab') {
-        const focusable = this.querySelectorAll('a,button');
-        const first = focusable[0];
-        const last = focusable[focusable.length-1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-      if (e.key === 'Escape') {
-        this.classList.remove('active');
-        document.getElementById('showDevBtn').focus();
-      }
-    });
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // --- Firebase Auth UI Logic ---
+    // DOM Elements
     const authSection = document.getElementById('auth-section');
-    const userInfo2 = document.getElementById('user-info');
-    const loginGoogle = document.getElementById('login-google');
-    const loginGithub = document.getElementById('login-github');
-    const loginEmail = document.getElementById('login-email');
+    const userInfo = document.getElementById('user-info');
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-name');
+    const loginGoogleBtn = document.getElementById('login-google');
+    const loginGithubBtn = document.getElementById('login-github');
     const logoutBtn = document.getElementById('logout-btn');
+    const mainContent = document.getElementById('main-content');
+    const themeToggle = document.getElementById('theme-toggle');
+    const fontToggle = document.getElementById('font-toggle');
+    const topicInput = document.getElementById('topic-input');
+    const generateBtn = document.getElementById('generate-btn');
+    const generateSpinner = document.getElementById('generate-spinner');
+    const flashcardsSection = document.getElementById('flashcardsSection');
+    const statusMessage = document.getElementById('status-message');
+    const progressBarInner = document.getElementById('progressBarInner');
+    const progressText = document.getElementById('progress-text');
+    const motivationQuote = document.getElementById('motivationQuote');
+    const searchInput = document.getElementById('searchInput');
+    const showDevBtn = document.getElementById('showDevBtn');
+    const devModal = document.getElementById('devModal');
+    const closeDevBtn = document.getElementById('closeDevBtn');
+    const shuffleBtn = document.getElementById('shuffle-btn');
+    const exportBtn = document.getElementById('export-btn');
+    const devLink = document.getElementById('dev-link');
 
-    function showUser(user) {
-      userInfo.style.display = 'block';
-      userInfo.innerHTML = `<b>Signed in as:</b><br><img src="${user.photoURL||''}" style="width:40px;height:40px;border-radius:50%;vertical-align:middle;margin-right:0.5em;">${user.displayName||user.email}`;
-      loginGoogle.style.display = 'none';
-      loginGithub.style.display = 'none';
-      loginEmail.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
-    }
-    function hideUser() {
-      userInfo.style.display = 'none';
-      loginGoogle.style.display = 'inline-block';
-      loginGithub.style.display = 'inline-block';
-      loginEmail.style.display = 'inline-block';
-      logoutBtn.style.display = 'none';
-    }
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        showUser(user);
-        // TODO: Load user flashcards from Firestore here
-      } else {
-        hideUser();
-        // TODO: Hide flashcards or show guest mode
-      }
-    });
-    loginGoogle.onclick = () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider);
-    };
-    loginGithub.onclick = () => {
-      const provider = new firebase.auth.GithubAuthProvider();
-      auth.signInWithPopup(provider);
-    };
-    loginEmail.onclick = () => {
-      const email = prompt('Enter your email:');
-      const password = prompt('Enter your password:');
-      if (email && password) {
-        auth.signInWithEmailAndPassword(email, password).catch(e => {
-          if (e.code === 'auth/user-not-found') {
-            auth.createUserWithEmailAndPassword(email, password);
-          } else {
-            alert(e.message);
-          }
-        });
-      }
-    };
-    logoutBtn.onclick = () => auth.signOut();
-    // --- Flashcard Data & State ---
-    let flashcards = JSON.parse(localStorage.getItem('flashcards')||'[]');
-    let filteredFlashcards = [...flashcards];
-    let editIndex = null;
-    let knownSet = new Set(JSON.parse(localStorage.getItem('knownSet')||'[]'));
-    let difficultSet = new Set(JSON.parse(localStorage.getItem('difficultSet')||'[]'));
-    let fontSize = localStorage.getItem('fontSize')||'1em';
-    let theme = localStorage.getItem('theme')||'light';
+    // App state
+    let flashcards = [];
+    let filteredFlashcards = [];
+    let knownSet = new Set();
+    let fontSize = localStorage.getItem('fontSize') || '1rem';
+    let theme = localStorage.getItem('theme') || 'light';
     let motivationQuotes = [
       "Success is the sum of small efforts, repeated day in and day out.",
-      "Don’t watch the clock; do what it does. Keep going.",
+      "Don't watch the clock; do what it does. Keep going.",
       "The secret of getting ahead is getting started.",
       "Great things never come from comfort zones.",
-      "Push yourself, because no one else is going to do it for you."
+      "Push yourself, because no one else is going to do it for you.",
+      "The harder you work for something, the greater you'll feel when you achieve it.",
+      "Dream it. Believe it. Build it.",
+      "Your limitation—it's only your imagination."
     ];
-    function showMotivation() {
-      document.getElementById('motivationQuote').textContent = motivationQuotes[Math.floor(Math.random()*motivationQuotes.length)];
-    }
-    showMotivation();
-    // --- Theme & Font Size ---
-    function toggleTheme() {
-      theme = (theme==='light')?'dark':'light';
-      document.body.className = theme;
-      localStorage.setItem('theme', theme);
-    }
-    function toggleFontSize() {
-      fontSize = (fontSize==='1em')?'1.2em':'1em';
-      document.body.style.fontSize = fontSize;
-      localStorage.setItem('fontSize', fontSize);
-    }
+
+    // Initialize theme
     document.body.className = theme;
+    themeToggle.innerHTML = theme === 'dark' 
+      ? '<i class="fas fa-sun"></i> Light Mode' 
+      : '<i class="fas fa-moon"></i> Dark Mode';
+
+    // Initialize font size
     document.body.style.fontSize = fontSize;
-    // --- Flashcard CRUD ---
-    function renderFlashcards(list=filteredFlashcards) {
-      const section = document.getElementById('flashcardsSection');
-      section.innerHTML = '';
-      if (!list.length) {
-        section.innerHTML = '<div style="text-align:center;color:#a5b4fc;font-size:1.1em;">No flashcards yet. Add or import some!</div>';
-        updateProgress();
-        return;
-      }
-      list.forEach((card, i) => {
-        const div = document.createElement('div');
-        div.className = 'flashcard'+(card.known?' known':'')+(card.difficult?' difficult':'');
-        div.tabIndex = 0;
-        div.innerHTML = `
-          <div class="question">${card.question}</div>
-          <div class="answer" style="display:none;">${card.answer}</div>
-          <div class="actions">
-            <button class="known" title="Mark as Known" onclick="markKnown(${i})">✓</button>
-            <button class="difficult" title="Mark as Difficult" onclick="markDifficult(${i})">!</button>
-            <button class="edit" title="Edit" onclick="editFlashcard(${i})">✎</button>
-            <button class="delete" title="Delete" onclick="deleteFlashcard(${i})">🗑️</button>
-          </div>
-        `;
-        div.onclick = function(e) {
-          if (!e.target.closest('.actions')) {
-            const ans = div.querySelector('.answer');
-            ans.style.display = ans.style.display==='block'?'none':'block';
-            div.classList.toggle('show-answer');
-          }
-        };
-        div.onkeydown = function(e) {
-          if (e.key==='Enter' || e.key===' ') div.click();
-        };
-        section.appendChild(div);
-      });
-      updateProgress();
-    }
-    function saveFlashcards() {
-      localStorage.setItem('flashcards', JSON.stringify(flashcards));
-      renderFlashcards();
-      if (auth.currentUser) saveFlashcardsToCloud(auth.currentUser, flashcards);
-    }
-    function saveFlashcard(e) {
-      e.preventDefault();
-      const q = document.getElementById('questionInput').value.trim();
-      const a = document.getElementById('answerInput').value.trim();
-      if (!q || !a) return false;
-      if (editIndex!==null) {
-        flashcards[editIndex] = {question:q, answer:a, known:flashcards[editIndex].known, difficult:flashcards[editIndex].difficult};
-        editIndex = null;
-      } else {
-        flashcards.push({question:q, answer:a});
-      }
-      document.getElementById('flashcardForm').reset();
-      saveFlashcards();
-      return false;
-    }
-    function editFlashcard(i) {
-      document.getElementById('questionInput').value = flashcards[i].question;
-      document.getElementById('answerInput').value = flashcards[i].answer;
-      editIndex = i;
-    }
-    function deleteFlashcard(i) {
-      if (confirm('Delete this flashcard?')) {
-        flashcards.splice(i,1);
-        saveFlashcards();
-      }
-    }
-    function cancelEdit() {
-      document.getElementById('flashcardForm').reset();
-      editIndex = null;
-    }
-    // --- Mark Known/Difficult ---
-    function markKnown(i) {
-      flashcards[i].known = !flashcards[i].known;
-      saveFlashcards();
-    }
-    function markDifficult(i) {
-      flashcards[i].difficult = !flashcards[i].difficult;
-      saveFlashcards();
-    }
-    // --- Shuffle ---
-    function shuffleFlashcards() {
-      for (let i = flashcards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
-      }
-      saveFlashcards();
-    }
-    // --- Search/Filter ---
-    function searchFlashcards() {
-      const val = document.getElementById('searchInput').value.toLowerCase();
-      filteredFlashcards = flashcards.filter(c => c.question.toLowerCase().includes(val) || c.answer.toLowerCase().includes(val));
-      renderFlashcards(filteredFlashcards);
-    }
-    function resetSearch() {
-      document.getElementById('searchInput').value = '';
-      filteredFlashcards = [...flashcards];
-      renderFlashcards();
-    }
-    // --- Import/Export ---
-    function exportFlashcards() {
-      const blob = new Blob([JSON.stringify(flashcards,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'flashcards.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    function importFlashcards(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        try {
-          const imported = JSON.parse(ev.target.result);
-          if (Array.isArray(imported)) {
-            flashcards = imported;
-            saveFlashcards();
-          } else {
-            alert('Invalid file format.');
-          }
-        } catch {
-          alert('Invalid file.');
-        }
-      };
-      reader.readAsText(file);
-    }
-    // --- Progress Tracking ---
-    function updateProgress() {
-      const total = flashcards.length;
-      const known = flashcards.filter(c=>c.known).length;
-      const percent = total?Math.round((known/total)*100):0;
-      document.getElementById('progressBarInner').style.width = percent+'%';
-      document.getElementById('progressBarInner').textContent = percent+'%';
-    }
-    // --- Spaced Repetition (basic) ---
-    // (For demo: highlight difficult cards)
-    function highlightDifficult() {
-      flashcards.forEach((c,i)=>{
-        if (c.difficult) document.querySelectorAll('.flashcard')[i]?.classList.add('difficult');
-      });
-    }
-    // --- Keyboard Navigation ---
-    document.addEventListener('keydown', function(e) {
-      if (e.key==='ArrowRight') shuffleFlashcards();
-    });
-    // --- Initial Render ---
-    renderFlashcards();
-  </script>
-  <script>
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyBWXjy0y3xf_FjdPLoygm8IzPAsJkPP5Hs",
-        authDomain: "pranit-dandewar.firebaseapp.com",
-        projectId: "pranit-dandewar",
-        storageBucket: "pranit-dandewar.firebasestorage.app",
-        messagingSenderId: "729828970412",
-        appId: "1:729828970412:web:8cb3b430139fa446baf409",
-        measurementId: "G-0FG5MCQ7TQ"
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const db = firebase.firestore();
 
-      // --- Authentication ---
-      const authSection2 = document.getElementById('auth-section');
-      const userInfo = document.getElementById('user-info');
-      const loginGoogleBtn = document.getElementById('login-google');
-      const loginGithubBtn = document.getElementById('login-github');
-      const loginEmailBtn = document.getElementById('login-email');
-      const logoutBtn = document.getElementById('logout-btn');
+    // Set random motivation quote
+    motivationQuote.textContent = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
 
-      // Update UI for logged-in user
-      function updateUI(user) {
-        if (user) {
-          const { displayName, email, photoURL } = user;
-          userInfo2.style.display = 'block';
-          userInfo2.innerHTML = `
-            Signed in as <strong>${displayName || email}</strong>
-            <br><img src="${photoURL}" alt="Profile Photo" style="width:40px;height:40px;border-radius:50%;margin-top:0.5em;">
-          `;
-          loginGoogleBtn.style.display = 'none';
-          loginGithubBtn.style.display = 'none';
-          loginEmailBtn.style.display = 'none';
-          logoutBtn.style.display = 'inline-block';
-        } else {
-          userInfo2.style.display = 'none';
-          loginGoogleBtn.style.display = 'inline-block';
-          loginGithubBtn.style.display = 'inline-block';
-          loginEmailBtn.style.display = 'inline-block';
-          logoutBtn.style.display = 'none';
-        }
-      }
-
-      // Google login
+    // Firebase Authentication
+    function initAuth() {
+      // Google Sign-In
       loginGoogleBtn.addEventListener('click', () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).then(result => {
-          updateUI(result.user);
-        }).catch(console.error);
+        auth.signInWithPopup(provider)
+          .then(handleSignIn)
+          .catch(handleAuthError);
       });
 
-      // GitHub login
+      // GitHub Sign-In
       loginGithubBtn.addEventListener('click', () => {
         const provider = new firebase.auth.GithubAuthProvider();
-        auth.signInWithPopup(provider).then(result => {
-          updateUI(result.user);
-        }).catch(console.error);
-      });
-
-      // Email/password login
-      loginEmailBtn.addEventListener('click', () => {
-        const email = prompt('Enter your email:');
-        const password = prompt('Enter your password:');
-        if (email && password) {
-          auth.signInWithEmailAndPassword(email, password).then(result => {
-            updateUI(result.user);
-          }).catch(console.error);
-        }
+        auth.signInWithPopup(provider)
+          .then(handleSignIn)
+          .catch(handleAuthError);
       });
 
       // Logout
       logoutBtn.addEventListener('click', () => {
-        auth.signOut().then(() => {
-          updateUI(null);
-        }).catch(console.error);
+        auth.signOut()
+          .then(() => {
+            showStatus('Signed out successfully', 'success');
+            updateAuthUI(null);
+          })
+          .catch(handleAuthError);
       });
 
       // Auth state listener
       auth.onAuthStateChanged(user => {
-        updateUI(user);
+        updateAuthUI(user);
+        if (user) {
+          loadFlashcards(user.uid);
+        } else {
+          loadLocalFlashcards();
+        }
       });
-    </script>
-  <script>
-    // --- Firebase Flashcard Sync ---
-function saveFlashcardsToCloud(user, flashcards) {
-  if (!user) return;
-  db.collection('users').doc(user.uid).set({ flashcards });
-}
-function loadFlashcardsFromCloud(user) {
-  if (!user) return;
-  db.collection('users').doc(user.uid).get().then(doc => {
-    if (doc.exists && doc.data().flashcards) {
-      flashcards = doc.data().flashcards;
+    }
+
+    function handleSignIn(result) {
+      showStatus(`Welcome, ${result.user.displayName || 'User'}!`, 'success');
+    }
+
+    function handleAuthError(error) {
+      console.error('Authentication error:', error);
+      showStatus(`Authentication failed: ${error.message}`, 'error');
+    }
+
+    function updateAuthUI(user) {
+      if (user) {
+        // User is signed in
+        userInfo.style.display = 'flex';
+        userName.textContent = user.displayName || user.email;
+        
+        if (user.photoURL) {
+          userAvatar.src = user.photoURL;
+        } else {
+          userAvatar.style.display = 'none';
+        }
+        
+        loginGoogleBtn.style.display = 'none';
+        loginGithubBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+        mainContent.style.display = 'block';
+      } else {
+        // User is signed out
+        userInfo.style.display = 'none';
+        loginGoogleBtn.style.display = 'block';
+        loginGithubBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+        mainContent.style.display = 'block';
+      }
+    }
+
+    // Flashcard Functions
+    function loadFlashcards(userId) {
+      db.collection('users').doc(userId).get()
+        .then(doc => {
+          if (doc.exists && doc.data().flashcards) {
+            flashcards = doc.data().flashcards;
+            filteredFlashcards = [...flashcards];
+            renderFlashcards();
+            updateProgress();
+            showStatus('Flashcards loaded from cloud', 'success');
+          } else {
+            loadLocalFlashcards();
+          }
+        })
+        .catch(error => {
+          console.error('Error loading flashcards:', error);
+          loadLocalFlashcards();
+          showStatus('Using local flashcards', 'info');
+        });
+    }
+
+    function loadLocalFlashcards() {
+      const savedCards = localStorage.getItem('flashcards');
+      if (savedCards) {
+        flashcards = JSON.parse(savedCards);
+        filteredFlashcards = [...flashcards];
+        renderFlashcards();
+        updateProgress();
+      }
+    }
+
+    function saveFlashcards() {
+      const user = auth.currentUser;
+      if (user) {
+        // Save to Firestore
+        db.collection('users').doc(user.uid).set({ flashcards })
+          .then(() => console.log('Flashcards saved to cloud'))
+          .catch(error => console.error('Error saving to cloud:', error));
+      }
+      
+      // Always save to localStorage
       localStorage.setItem('flashcards', JSON.stringify(flashcards));
+    }
+
+    function renderFlashcards() {
+      flashcardsSection.innerHTML = '';
+      
+      if (filteredFlashcards.length === 0) {
+        flashcardsSection.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-lightbulb" style="font-size: 3rem; color: #a5b4fc; margin-bottom: 1rem;"></i>
+            <h3>No Flashcards Yet</h3>
+            <p>Enter a topic above to generate flashcards</p>
+          </div>
+        `;
+        return;
+      }
+      
+      filteredFlashcards.forEach((card, index) => {
+        const flashcard = document.createElement('div');
+        flashcard.className = 'flashcard';
+        flashcard.innerHTML = `
+          <div class="question">${card.front}</div>
+          <div class="answer">${card.back}</div>
+          <div class="actions">
+            <button class="known" title="Mark as Known" data-index="${index}">
+              <i class="fas fa-check"></i>
+            </button>
+            <button class="difficult" title="Mark as Difficult" data-index="${index}">
+              <i class="fas fa-exclamation"></i>
+            </button>
+            <button class="delete" title="Delete" data-index="${index}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+        
+        // Add click event to show answer
+        flashcard.addEventListener('click', (e) => {
+          if (!e.target.closest('.actions')) {
+            flashcard.classList.toggle('show-answer');
+          }
+        });
+        
+        flashcardsSection.appendChild(flashcard);
+      });
+      
+      // Add event listeners to action buttons
+      document.querySelectorAll('.flashcard .known').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(btn.dataset.index);
+          markAsKnown(index);
+        });
+      });
+      
+      document.querySelectorAll('.flashcard .difficult').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(btn.dataset.index);
+          markAsDifficult(index);
+        });
+      });
+      
+      document.querySelectorAll('.flashcard .delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(btn.dataset.index);
+          deleteFlashcard(index);
+        });
+      });
+    }
+
+    function markAsKnown(index) {
+      flashcards[index].known = !flashcards[index].known;
+      if (flashcards[index].known) {
+        knownSet.add(index);
+      } else {
+        knownSet.delete(index);
+      }
+      saveFlashcards();
+      updateProgress();
+      showStatus('Flashcard status updated', 'success');
+    }
+
+    function markAsDifficult(index) {
+      flashcards[index].difficult = !flashcards[index].difficult;
+      saveFlashcards();
+      showStatus('Flashcard marked as difficult', 'info');
+    }
+
+    function deleteFlashcard(index) {
+      if (confirm('Are you sure you want to delete this flashcard?')) {
+        flashcards.splice(index, 1);
+        saveFlashcards();
+        filteredFlashcards = [...flashcards];
+        renderFlashcards();
+        updateProgress();
+        showStatus('Flashcard deleted', 'success');
+      }
+    }
+
+    function updateProgress() {
+      const total = flashcards.length;
+      const known = flashcards.filter(card => card.known).length;
+      const percentage = total > 0 ? Math.round((known / total) * 100) : 0;
+      
+      progressBarInner.style.width = `${percentage}%`;
+      progressBarInner.textContent = `${percentage}%`;
+      progressText.textContent = `${percentage}% Complete (${known}/${total} known)`;
+    }
+
+    function generateFlashcards() {
+      const topic = topicInput.value.trim();
+      if (!topic) {
+        showStatus('Please enter a topic', 'error');
+        return;
+      }
+      
+      generateBtn.disabled = true;
+      generateSpinner.style.display = 'inline-block';
+      showStatus('Generating flashcards...', 'info');
+      
+      // Simulate API call with mock data
+      setTimeout(() => {
+        const mockCards = [
+          { front: "What is Newton's First Law?", back: "An object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force." },
+          { front: "What is Newton's Second Law?", back: "Force equals mass times acceleration (F = m × a)." },
+          { front: "What is Newton's Third Law?", back: "For every action, there is an equal and opposite reaction." },
+          { front: "What is the SI unit of force?", back: "Newton (N)." },
+          { front: "Define acceleration.", back: "The rate of change of velocity with respect to time." },
+          { front: "What is inertia?", back: "The resistance of any physical object to a change in its velocity." },
+          { front: "State the law of conservation of momentum.", back: "The total momentum of a closed system remains constant if no external forces act on it." },
+          { front: "What is the formula for kinetic energy?", back: "KE = ½ mv²" },
+          { front: "Define work in physics.", back: "Work is done when a force causes displacement of an object (W = F × d)." },
+          { front: "What is the difference between speed and velocity?", back: "Speed is scalar (magnitude only), velocity is vector (magnitude and direction)." }
+        ];
+        
+        // Add new cards to the beginning
+        flashcards = [...mockCards, ...flashcards];
+        filteredFlashcards = [...flashcards];
+        saveFlashcards();
+        renderFlashcards();
+        updateProgress();
+        
+        generateBtn.disabled = false;
+        generateSpinner.style.display = 'none';
+        showStatus(`Generated ${mockCards.length} flashcards on "${topic}"`, 'success');
+        topicInput.value = '';
+      }, 1500);
+    }
+
+    function searchFlashcards() {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        filteredFlashcards = [...flashcards];
+        renderFlashcards();
+        return;
+      }
+      
+      filteredFlashcards = flashcards.filter(card => 
+        card.front.toLowerCase().includes(query) || 
+        card.back.toLowerCase().includes(query)
+      );
+      
+      if (filteredFlashcards.length === 0) {
+        showStatus('No flashcards match your search', 'info');
+      } else {
+        showStatus(`Found ${filteredFlashcards.length} matching flashcards`, 'success');
+      }
+      
       renderFlashcards();
     }
-  });
-}
-// Listen for auth state changes and sync flashcards
-auth.onAuthStateChanged(user => {
-  if (user) {
-    showUser(user);
-    loadFlashcardsFromCloud(user);
-    document.getElementById('main-content').style.display = 'block';
-    document.getElementById('auth-section').style.display = 'none';
-  } else {
-    hideUser();
-    document.getElementById('main-content').style.display = 'none';
-    document.getElementById('auth-section').style.display = 'block';
-  }
-});
-// Save to cloud whenever flashcards change (for logged-in users)
-function saveFlashcards() {
-  localStorage.setItem('flashcards', JSON.stringify(flashcards));
-  renderFlashcards();
-  if (auth.currentUser) saveFlashcardsToCloud(auth.currentUser, flashcards);
-}
+
+    function resetSearch() {
+      searchInput.value = '';
+      filteredFlashcards = [...flashcards];
+      renderFlashcards();
+      showStatus('Search reset', 'info');
+    }
+
+    function shuffleFlashcards() {
+      for (let i = filteredFlashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredFlashcards[i], filteredFlashcards[j]] = [filteredFlashcards[j], filteredFlashcards[i]];
+      }
+      renderFlashcards();
+      showStatus('Flashcards shuffled', 'success');
+    }
+
+    function exportFlashcards() {
+      if (flashcards.length === 0) {
+        showStatus('No flashcards to export', 'error');
+        return;
+      }
+      
+      const dataStr = JSON.stringify(flashcards, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'flashlearn-flashcards.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showStatus('Flashcards exported successfully', 'success');
+    }
+
+    // UI Functions
+    function toggleTheme() {
+      theme = theme === 'light' ? 'dark' : 'light';
+      document.body.className = theme;
+      localStorage.setItem('theme', theme);
+      
+      themeToggle.innerHTML = theme === 'dark' 
+        ? '<i class="fas fa-sun"></i> Light Mode' 
+        : '<i class="fas fa-moon"></i> Dark Mode';
+    }
+
+    function toggleFontSize() {
+      if (fontSize === '1rem') {
+        fontSize = '1.1rem';
+        fontToggle.innerHTML = '<i class="fas fa-text-height"></i> A-';
+      } else {
+        fontSize = '1rem';
+        fontToggle.innerHTML = '<i class="fas fa-text-height"></i> A+';
+      }
+      document.body.style.fontSize = fontSize;
+      localStorage.setItem('fontSize', fontSize);
+    }
+
+    function showStatus(message, type = 'info') {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message status-${type}`;
+      statusMessage.style.display = 'block';
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 5000);
+    }
+
+    function showDeveloperModal() {
+      devModal.classList.add('active');
+    }
+
+    function closeDeveloperModal() {
+      devModal.classList.remove('active');
+    }
+
+    // Event Listeners
+    themeToggle.addEventListener('click', toggleTheme);
+    fontToggle.addEventListener('click', toggleFontSize);
+    generateBtn.addEventListener('click', generateFlashcards);
+    topicInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') generateFlashcards();
+    });
+    showDevBtn.addEventListener('click', showDeveloperModal);
+    closeDevBtn.addEventListener('click', closeDeveloperModal);
+    devModal.addEventListener('click', (e) => {
+      if (e.target === devModal) closeDeveloperModal();
+    });
+    shuffleBtn.addEventListener('click', shuffleFlashcards);
+    exportBtn.addEventListener('click', exportFlashcards);
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchFlashcards();
+    });
+    devLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showDeveloperModal();
+    });
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', () => {
+      initAuth();
+      loadLocalFlashcards();
+    });
   </script>
 </body>
 </html>
